@@ -1,0 +1,3 @@
+Transaction ID,Timestamp,Type,Symbol,Quantity,Price,Total Amount,Fee,Notes
+TX-63724FC6,2026-08-27 17:26:26,BUY,AAPL,10,204.81,2049.12,1.02,"Executed MARKET order #F586940A"
+TX-36A74189,2026-08-27 17:26:11,DEPOSIT,CASH,1,500000.00,500000.00,0.00,"Web Cash Deposit"

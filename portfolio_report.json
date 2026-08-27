@@ -1,0 +1,61 @@
+{
+  "reportGeneratedAt" : "2026-08-27T21:46:23.700630600",
+  "portfolioId" : "3768020D",
+  "portfolioName" : "Primary Trading Portfolio",
+  "userId" : "5C1D1B87",
+  "cashBalance" : 597950.88,
+  "initialCash" : 100000.0,
+  "totalHoldingsValue" : 1856.6,
+  "totalEquity" : 599807.48,
+  "holdings" : [ {
+    "symbol" : "AAPL",
+    "quantity" : 10,
+    "averageCostBasis" : 204.91,
+    "currentPrice" : 185.66,
+    "marketValue" : 1856.6,
+    "unrealizedPnL" : -192.52,
+    "unrealizedPnLPercent" : -9.4,
+    "realizedPnL" : 0.0
+  } ],
+  "performanceMetrics" : {
+    "totalReturnAmount" : 499807.48,
+    "totalReturnPercent" : 499.81,
+    "realizedPnL" : 0.0,
+    "unrealizedPnL" : -192.52,
+    "totalDividends" : 0.0,
+    "sharpeRatio" : 0.0,
+    "maxDrawdownPercent" : 0.0,
+    "winRatePercent" : 0.0,
+    "profitFactor" : 1.0,
+    "totalTrades" : 0,
+    "winningTrades" : 0,
+    "losingTrades" : 0
+  },
+  "recentTransactions" : [ {
+    "id" : "TX-63724FC6",
+    "userId" : "5C1D1B87",
+    "portfolioId" : "3768020D",
+    "orderId" : "F586940A",
+    "symbol" : "AAPL",
+    "type" : "BUY",
+    "quantity" : 10,
+    "price" : 204.81,
+    "totalAmount" : 2049.12,
+    "fee" : 1.02,
+    "timestamp" : "2026-08-27T17:26:26.486784",
+    "notes" : "Executed MARKET order #F586940A"
+  }, {
+    "id" : "TX-36A74189",
+    "userId" : "5C1D1B87",
+    "portfolioId" : "3768020D",
+    "orderId" : null,
+    "symbol" : "CASH",
+    "type" : "DEPOSIT",
+    "quantity" : 1,
+    "price" : 500000.0,
+    "totalAmount" : 500000.0,
+    "fee" : 0.0,
+    "timestamp" : "2026-08-27T17:26:11.2744004",
+    "notes" : "Web Cash Deposit"
+  } ]
+}

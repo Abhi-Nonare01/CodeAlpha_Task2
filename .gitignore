@@ -1,0 +1,18 @@
+# Target build directory
+target/
+dependency-reduced-pom.xml
+
+# Embedded Databases & temporary files
+*.db
+*.db-journal
+*.log
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+*.class
+
+# OS Generated
+.DS_Store
+Thumbs.db
