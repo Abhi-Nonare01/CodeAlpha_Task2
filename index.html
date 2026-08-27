@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-obsidian">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumTrade | Simple &amp; Smart Stock Trading</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        brand: { 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' },
+                        trade: { green: '#10b981', red: '#f43f5e', yellow: '#f59e0b', cyan: '#06b6d4', purple: '#8b5cf6' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Theme Variables */
+        .theme-obsidian {
+            --bg-main: #090d16;
+            --bg-card: #111827;
+            --bg-input: #0b0f19;
+            --border-color: #1f2937;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-primary: #3b82f6;
+            --card-subtle: #1e293b;
+        }
+        /* Crisp, High-Contrast Light Mode (Zerodha/Apple Inspired) */
+        .theme-frost {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent-primary: #2563eb;
+            --card-subtle: #f1f5f9;
+        }
+        .theme-frost .text-white { color: #0f172a !important; }
+        .theme-frost .text-slate-300 { color: #1e293b !important; }
+        .theme-frost .text-slate-400 { color: #475569 !important; }
+        .theme-frost .bg-slate-900 { background-color: #ffffff !important; }
+        .theme-frost .bg-slate-950 { background-color: #f8fafc !important; }
+        .theme-frost .bg-slate-800 { background-color: #f1f5f9 !important; color: #0f172a !important; }
+        .theme-frost .border-slate-800 { border-color: #e2e8f0 !important; }
+        .theme-frost .border-slate-700 { border-color: #cbd5e1 !important; }
+        .theme-frost .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]) { border-color: #e2e8f0 !important; }
+        .theme-frost button.bg-slate-800 { background-color: #e2e8f0 !important; color: #0f172a !important; }
+        .theme-frost button.bg-slate-800:hover { background-color: #cbd5e1 !important; }
+
+        .theme-cyberpunk {
+            --bg-main: #0b0718;
+            --bg-card: #150f2e;
+            --bg-input: #0e0a22;
+            --border-color: #2b1d56;
+            --text-main: #fdf4ff;
+            --text-muted: #a78bfa;
+            --accent-primary: #8b5cf6;
+            --card-subtle: #1e1540;
+        }
+        .theme-emerald {
+            --bg-main: #05140f;
+            --bg-card: #0b261d;
+            --bg-input: #071c15;
+            --border-color: #154535;
+            --text-main: #f0fdf4;
+            --text-muted: #6ee7b7;
+            --accent-primary: #10b981;
+            --card-subtle: #0f362a;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        .themed-card {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            transition: all 0.25s ease;
+        }
+        .themed-input {
+            background-color: var(--bg-input);
+            border-color: var(--border-color);
+            color: var(--text-main);
+        }
+        .tab-btn.active {
+            color: var(--accent-primary) !important;
+            border-bottom: 2.5px solid var(--accent-primary);
+        }
+        .toast-animate { animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+        .ticker-wrap { overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-flex; animation: ticker 45s linear infinite; }
+        .ticker-wrap:hover .ticker-move { animation-play-state: paused; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col space-y-2 max-w-sm pointer-events-none"></div>
+
+    <!-- MANDATORY FULLSCREEN LOGIN / SIGN-UP GATEWAY -->
+    <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md">
+        <div class="themed-card rounded-3xl border p-6 md:p-8 max-w-md w-full shadow-2xl space-y-6 relative overflow-hidden">
+            <!-- Header -->
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-1">
+                    <i data-lucide="shield-check" class="w-7 h-7"></i>
+                </div>
+                <h2 id="gatewayTitle" class="text-2xl font-extrabold tracking-tight text-white">Login to QuantumTrade</h2>
+                <p id="gatewaySubtitle" class="text-xs text-slate-400">Institutional stock trading platform with real-time market execution.</p>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="grid grid-cols-3 gap-2 text-center py-2 px-3 rounded-2xl bg-slate-900/60 border border-slate-800 text-[11px] font-medium text-slate-400">
+                <div class="flex items-center justify-center space-x-1"><i data-lucide="lock" class="w-3.5 h-3.5 text-blue-400"></i><span>256-Bit SSL</span></div>
+                <div class="flex items-center justify-center space-x-1 border-x border-slate-800"><i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i><span>Persistent</span></div>
+                <div class="flex items-center justify-center space-x-1"><i data-lucide="shield" class="w-3.5 h-3.5 text-cyan-400"></i><span>Zero Risk</span></div>
+            </div>
+
+            <!-- SIGN IN FORM -->
+            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
+                        <input type="text" id="gLoginUser" required placeholder="Enter username (e.g. trader1)"
+                               class="w-full themed-input rounded-xl pl-9 pr-3 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-medium">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <div class="relative">
+                        <i data-lucide="key" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
+                        <input type="password" id="gLoginPass" required placeholder="Enter password"
+                               class="w-full themed-input rounded-xl pl-9 pr-3 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-medium">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-2">
+                    <span>Sign In to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+                <div class="text-center text-xs text-slate-400 pt-1">
+                    New user? <a href="javascript:void(0)" onclick="toggleGatewayMode(true)" class="text-blue-400 hover:underline font-bold">Create Account (Free)</a>
+                </div>
+            </form>
+
+            <!-- REGISTRATION FORM -->
+            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-3 hidden">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Full Name</label>
+                    <input type="text" id="gRegName" required placeholder="e.g. Rahul Sharma"
+                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Username (Used to Login)</label>
+                    <input type="text" id="gRegUser" required placeholder="Choose a unique username"
+                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Email Address</label>
+                    <input type="email" id="gRegEmail" required placeholder="name@email.com"
+                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Password</label>
+                    <input type="password" id="gRegPass" required placeholder="Create password"
+                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Starting Virtual Capital</label>
+                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500 font-mono">
+                        <option value="100000">$100,000.00 (Standard)</option>
+                        <option value="50000">$50,000.00</option>
+                        <option value="250000">$250,000.00 (Pro)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-2">
+                    <span>Create Real Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                </button>
+                <div class="text-center text-xs text-slate-400 pt-1">
+                    Already registered? <a href="javascript:void(0)" onclick="toggleGatewayMode(false)" class="text-blue-400 hover:underline font-bold">Sign In here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Ticker Ribbon -->
+    <div class="themed-card border-b py-1.5 px-4 text-xs font-mono ticker-wrap">
+        <div id="tickerRibbon" class="ticker-move space-x-6 text-slate-400">
+            <span>Loading live ticker prices...</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="themed-card border-b sticky top-0 z-30 px-4 md:px-8 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-6 md:space-x-8">
+            <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('watchlist')">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md font-bold">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base tracking-tight text-white flex items-center">
+                        Quantum<span class="text-blue-500">Trade</span>
+                        <span class="ml-1.5 text-[9px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 border border-blue-500/20 font-mono">PRO</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Main Tabs (Upstox / Angel One Style) -->
+            <nav class="hidden sm:flex items-center space-x-2 text-xs font-bold">
+                <button onclick="switchTab('watchlist')" id="tab-watchlist" class="tab-btn active px-3 py-2 transition flex items-center">
+                    <i data-lucide="layers" class="w-4 h-4 mr-1.5"></i> Watchlist
+                </button>
+                <button onclick="switchTab('portfolio')" id="tab-portfolio" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                    <i data-lucide="briefcase" class="w-4 h-4 mr-1.5"></i> Portfolio
+                </button>
+                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                    <i data-lucide="clock" class="w-4 h-4 mr-1.5"></i> Orders
+                </button>
+                <button onclick="switchTab('funds')" id="tab-funds" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                    <i data-lucide="wallet" class="w-4 h-4 mr-1.5"></i> Funds
+                </button>
+            </nav>
+        </div>
+
+        <!-- Right Side -->
+        <div class="flex items-center space-x-3 md:space-x-4">
+            <div onclick="switchTab('funds')" class="cursor-pointer hidden md:flex items-center space-x-2 themed-input px-3 py-1.5 rounded-xl border transition">
+                <span class="text-[11px] text-slate-400">Available:</span>
+                <span id="navCash" class="font-bold text-xs font-mono text-emerald-500">$0.00</span>
+            </div>
+
+            <div class="relative">
+                <button onclick="toggleThemeDropdown()" class="p-2 rounded-xl themed-input border hover:border-blue-500 transition flex items-center" title="Change Theme">
+                    <i data-lucide="palette" class="w-4 h-4 text-blue-500"></i>
+                </button>
+                <div id="themeDropdown" class="hidden absolute right-0 mt-2 w-52 themed-card rounded-2xl border shadow-2xl p-2 z-50 space-y-1 text-xs font-bold">
+                    <div class="px-2 py-1 text-[10px] uppercase text-slate-400 font-extrabold border-b border-slate-700">UI Themes</div>
+                    <button onclick="setTheme('theme-obsidian')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center space-x-2.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-900 border border-slate-600"></span> <span>🌌 Midnight Obsidian</span>
+                    </button>
+                    <button onclick="setTheme('theme-frost')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center space-x-2.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-100 border border-slate-300"></span> <span>☀️ Clean Frost Light</span>
+                    </button>
+                    <button onclick="setTheme('theme-cyberpunk')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center space-x-2.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600"></span> <span>🟣 Cyberpunk Neon</span>
+                    </button>
+                    <button onclick="setTheme('theme-emerald')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center space-x-2.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span> <span>🟢 Emerald Wealth</span>
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="openProfileDrawer()" class="flex items-center space-x-2.5 themed-input px-3 py-1.5 rounded-xl border hover:border-blue-500 transition">
+                <div id="userAvatar" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow">
+                    U
+                </div>
+                <div class="hidden sm:block text-left">
+                    <div id="navUserName" class="text-xs font-bold text-white">Trader</div>
+                    <div class="text-[9px] text-emerald-500 font-mono font-semibold">VERIFIED ✅</div>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- PROFILE DRAWER -->
+    <div id="profileDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeProfileDrawer()"></div>
+        <div class="absolute top-0 right-0 bottom-0 w-full max-w-md themed-card border-l shadow-2xl p-6 overflow-y-auto flex flex-col justify-between space-y-6">
+            <div class="space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h3 class="font-extrabold text-base text-white flex items-center">
+                        <i data-lucide="user" class="w-5 h-5 mr-2 text-blue-500"></i> Trader Profile
+                    </h3>
+                    <button onclick="closeProfileDrawer()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-900/30 via-slate-900 to-slate-950 border border-blue-500/20 space-y-3">
+                    <div class="flex items-center space-x-3.5">
+                        <div id="drawerAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-black text-base flex items-center justify-center shadow-lg">
+                            AM
+                        </div>
+                        <div>
+                            <h4 id="drawerFullName" class="font-extrabold text-base text-white">Alex Morgan</h4>
+                            <p id="drawerUsername" class="text-xs font-mono text-blue-400 font-semibold">@trader1</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Account Status:</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[11px]">
+                            KYC Verified ✅
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
+                        <span class="text-slate-400 font-sans font-medium">Account ID:</span>
+                        <span id="drawerAccId" class="font-bold text-white">ACC-8821</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
+                        <span class="text-slate-400 font-sans font-medium">Email:</span>
+                        <span id="drawerEmail" class="font-bold text-white">alex@domain.com</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
+                        <span class="text-slate-400 font-sans font-medium">Trading Segment:</span>
+                        <span class="font-bold text-emerald-500 font-sans">Equity &amp; Intraday Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
+                        <span class="text-slate-400 font-sans font-medium">Joined Date:</span>
+                        <span id="drawerJoinedDate" class="font-bold text-white">2026-08-27</span>
+                    </div>
+                </div>
+
+                <div class="themed-card rounded-2xl border p-4 space-y-3">
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Financial Overview</h5>
+                    <div class="grid grid-cols-2 gap-2 text-center text-xs font-mono">
+                        <div class="p-2.5 rounded-xl themed-input border">
+                            <div class="text-[10px] text-slate-400 font-sans">Total Net Worth</div>
+                            <div id="drawerNetWorth" class="font-bold text-white text-sm mt-0.5">$0.00</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl themed-input border">
+                            <div class="text-[10px] text-slate-400 font-sans">Win Rate</div>
+                            <div id="drawerWinRate" class="font-bold text-emerald-500 text-sm mt-0.5">0.0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="themed-card rounded-2xl border p-4 space-y-2.5">
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">
+                        <i data-lucide="palette" class="w-4 h-4 mr-1.5 text-blue-500"></i> Theme Style
+                    </h5>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+                        <button onclick="setTheme('theme-obsidian')" class="p-2 rounded-xl themed-input border hover:border-blue-500 text-left transition">
+                            🌌 Obsidian
+                        </button>
+                        <button onclick="setTheme('theme-frost')" class="p-2 rounded-xl themed-input border hover:border-blue-500 text-left transition">
+                            ☀️ Frost Light
+                        </button>
+                        <button onclick="setTheme('theme-cyberpunk')" class="p-2 rounded-xl themed-input border hover:border-purple-500 text-left transition">
+                            🟣 Cyberpunk
+                        </button>
+                        <button onclick="setTheme('theme-emerald')" class="p-2 rounded-xl themed-input border hover:border-emerald-500 text-left transition">
+                            🟢 Emerald
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800">
+                <button onclick="handleLogout()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 transition flex items-center justify-center space-x-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> <span>Sign Out</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="flex-1 p-3 md:p-6 max-w-7xl mx-auto w-full pb-20 sm:pb-6">
+
+        <!-- TAB 1: WATCHLIST & TRADING -->
+        <section id="section-watchlist" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-5 flex flex-col space-y-3">
+                <div class="themed-card rounded-2xl border p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="font-bold text-sm text-white flex items-center">
+                            <i data-lucide="list" class="w-4 h-4 mr-2 text-blue-500"></i> Market Watchlist
+                        </h2>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold flex items-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span> LIVE
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
+                        <input type="text" id="watchlistSearch" placeholder="Search AAPL, NVDA, TSLA..."
+                               class="w-full themed-input rounded-xl pl-9 pr-3 py-2 text-xs border focus:outline-none focus:border-blue-500 transition font-medium">
+                    </div>
+
+                    <div id="stockListContainer" class="mt-3 space-y-2 overflow-y-auto max-h-[580px] pr-1"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 flex flex-col space-y-4">
+                <div class="themed-card rounded-2xl border p-4 md:p-5 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                        <div class="flex items-center space-x-3">
+                            <div id="activeSymbolBadge" class="w-11 h-11 rounded-xl bg-blue-600/20 text-blue-500 font-extrabold text-sm flex items-center justify-center border border-blue-500/30 font-mono">
+                                AAPL
+                            </div>
+                            <div>
+                                <h3 id="activeStockName" class="font-bold text-base text-white">Apple Inc.</h3>
+                                <p id="activeStockSector" class="text-xs text-slate-400">Technology • Market Cap: $2,850B</p>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <div id="activeStockPrice" class="text-2xl font-bold font-mono text-white">$185.50</div>
+                            <div id="activeStockChange" class="text-xs font-semibold font-mono text-emerald-500">+2.45 (+1.34%)</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 my-3 text-center text-xs font-mono themed-input p-2.5 rounded-xl border">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-sans block">Day High</span>
+                            <span id="statDayHigh" class="font-bold text-white">$0.00</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-sans block">Day Low</span>
+                            <span id="statDayLow" class="font-bold text-white">$0.00</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-sans block">Bid</span>
+                            <span id="statBid" class="font-bold text-white">$0.00</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-sans block">Ask</span>
+                            <span id="statAsk" class="font-bold text-white">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="relative h-[240px] w-full mt-2">
+                        <canvas id="mainStockChart"></canvas>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-800">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-slate-300">Quick Trade Amount:</span>
+                            <div class="flex items-center space-x-1.5 text-[11px] font-mono font-bold">
+                                <button onclick="setQuantityInput(10)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">10 Sh</button>
+                                <button onclick="setQuantityInput(25)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">25 Sh</button>
+                                <button onclick="setQuantityInput(50)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">50 Sh</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div class="themed-input p-2.5 rounded-xl border flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-medium">Shares:</span>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="adjustShares(-5)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 font-bold font-mono text-sm text-white">-</button>
+                                    <input type="number" id="tradeQty" min="1" value="10" class="w-14 text-center bg-transparent text-white font-mono font-bold text-sm focus:outline-none" oninput="calculateEstTotal()">
+                                    <button onclick="adjustShares(5)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 font-bold font-mono text-sm text-white">+</button>
+                                </div>
+                            </div>
+                            <div class="themed-input p-2.5 rounded-xl border flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-medium">Total Approx:</span>
+                                <span id="tradeEstTotal" class="font-bold text-white font-mono text-sm">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="executeTrade('BUY')" class="py-3 rounded-xl font-bold text-sm uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                                <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                                <span>BUY <span id="buyBtnSymbol">AAPL</span></span>
+                            </button>
+                            <button onclick="executeTrade('SELL')" class="py-3 rounded-xl font-bold text-sm uppercase tracking-wider text-white bg-rose-600 hover:bg-rose-500 shadow-lg shadow-rose-600/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                                <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
+                                <span>SELL <span id="sellBtnSymbol">AAPL</span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: PORTFOLIO -->
+        <section id="section-portfolio" class="hidden space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="themed-card p-4 rounded-2xl border shadow-sm">
+                    <span class="text-xs text-slate-400 font-medium">Total Portfolio Value</span>
+                    <div id="portTotalValue" class="text-xl font-bold font-mono text-white mt-1">$0.00</div>
+                </div>
+                <div class="themed-card p-4 rounded-2xl border shadow-sm">
+                    <span class="text-xs text-slate-400 font-medium">Available Cash</span>
+                    <div id="portCash" class="text-xl font-bold font-mono text-emerald-500 mt-1">$0.00</div>
+                </div>
+                <div class="themed-card p-4 rounded-2xl border shadow-sm">
+                    <span class="text-xs text-slate-400 font-medium">Invested Amount</span>
+                    <div id="portInvested" class="text-xl font-bold font-mono text-white mt-1">$0.00</div>
+                </div>
+                <div class="themed-card p-4 rounded-2xl border shadow-sm">
+                    <span class="text-xs text-slate-400 font-medium">Overall Returns</span>
+                    <div id="portReturn" class="text-xl font-bold font-mono text-emerald-500 mt-1">+0.00%</div>
+                </div>
+            </div>
+
+            <div class="themed-card rounded-2xl border p-5 shadow-sm">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h3 class="font-bold text-sm text-white flex items-center">
+                        <i data-lucide="briefcase" class="w-4 h-4 mr-2 text-blue-500"></i> Open Positions &amp; Stock Holdings
+                    </h3>
+                    <span id="holdingBadgeCount" class="text-xs font-mono px-2.5 py-0.5 rounded-full themed-input border text-slate-400 font-bold">0 Stocks</span>
+                </div>
+                <div class="mt-3 overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase font-sans font-bold">
+                            <tr>
+                                <th class="pb-2.5">Stock</th>
+                                <th class="pb-2.5">Quantity</th>
+                                <th class="pb-2.5">Avg Buy Price</th>
+                                <th class="pb-2.5">Current Price</th>
+                                <th class="pb-2.5">Invested Value</th>
+                                <th class="pb-2.5">Current Value</th>
+                                <th class="pb-2.5">Profit / Loss</th>
+                                <th class="pb-2.5 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolioTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: ORDERS -->
+        <section id="section-orders" class="hidden space-y-5">
+            <div class="themed-card rounded-2xl border p-5 shadow-sm">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h3 class="font-bold text-sm text-white flex items-center">
+                        <i data-lucide="file-text" class="w-4 h-4 mr-2 text-blue-500"></i> Executed Trades &amp; Audit Trail
+                    </h3>
+                    <button onclick="downloadCSVReport()" class="px-3 py-1.5 themed-input hover:border-emerald-500 rounded-xl text-xs font-semibold transition flex items-center border">
+                        <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5 text-emerald-500"></i> Download CSV
+                    </button>
+                </div>
+                <div class="mt-3 overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase font-sans font-bold">
+                            <tr>
+                                <th class="pb-2.5">Order ID</th>
+                                <th class="pb-2.5">Time</th>
+                                <th class="pb-2.5">Type</th>
+                                <th class="pb-2.5">Stock</th>
+                                <th class="pb-2.5">Shares</th>
+                                <th class="pb-2.5">Execution Price</th>
+                                <th class="pb-2.5">Total Amount</th>
+                                <th class="pb-2.5">Fee</th>
+                                <th class="pb-2.5">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: FUNDS -->
+        <section id="section-funds" class="hidden max-w-2xl mx-auto space-y-5">
+            <div class="themed-card rounded-2xl border p-6 shadow-sm">
+                <h3 class="font-bold text-base text-white flex items-center mb-4">
+                    <i data-lucide="wallet" class="w-5 h-5 mr-2 text-blue-500"></i> Account Funds &amp; Cash Balance
+                </h3>
+
+                <div class="themed-input p-4 rounded-2xl border mb-5 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium">Available to Trade</span>
+                        <div id="fundsAvailable" class="text-2xl font-bold font-mono text-emerald-500 mt-0.5">$0.00</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Active</span>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block text-xs font-semibold text-slate-300">Quick Add / Withdraw Simulated Cash</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setFundAmount(5000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$5k</button>
+                        <button onclick="setFundAmount(10000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$10k</button>
+                        <button onclick="setFundAmount(25000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$25k</button>
+                        <button onclick="setFundAmount(50000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$50k</button>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <div class="relative flex-1">
+                            <span class="absolute left-3.5 top-2.5 text-slate-500 font-mono font-bold">$</span>
+                            <input type="number" id="fundsInput" value="10000" min="100" class="w-full themed-input rounded-xl pl-8 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500 border">
+                        </div>
+                        <button onclick="processFunds('deposit')" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition">
+                            Add Funds
+                        </button>
+                        <button onclick="processFunds('withdraw')" class="px-6 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition">
+                            Withdraw
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Standalone & Live Hybrid Engine Script -->
+    <script>
+        // Default Mock Stocks for 100% standalone hosting (GitHub Pages, Netlify, Vercel)
+        const DEFAULT_STOCKS = [
+            { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', price: 185.50, change: 2.45, changePercent: 1.34, dayHigh: 186.20, dayLow: 183.10, bid: 185.45, ask: 185.55, sparkline: [183.2, 184.0, 183.8, 185.1, 185.5] },
+            { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Semiconductors', price: 875.20, change: 18.50, changePercent: 2.16, dayHigh: 880.00, dayLow: 855.00, bid: 875.10, ask: 875.30, sparkline: [858, 862, 869, 871, 875.2] },
+            { symbol: 'MSFT', name: 'Microsoft Corp.', sector: 'Technology', price: 420.75, change: -1.20, changePercent: -0.28, dayHigh: 423.50, dayLow: 418.00, bid: 420.70, ask: 420.80, sparkline: [422, 421.5, 419.8, 420.2, 420.75] },
+            { symbol: 'TSLA', name: 'Tesla Inc.', sector: 'Automotive', price: 178.90, change: -4.30, changePercent: -2.35, dayHigh: 184.00, dayLow: 176.50, bid: 178.80, ask: 179.00, sparkline: [183, 181.5, 179.2, 177.8, 178.9] },
+            { symbol: 'AMZN', name: 'Amazon.com Inc.', sector: 'Consumer Cyclical', price: 178.25, change: 3.10, changePercent: 1.77, dayHigh: 179.00, dayLow: 175.20, bid: 178.20, ask: 178.30, sparkline: [175.5, 176.2, 177.0, 178.0, 178.25] },
+            { symbol: 'GOOGL', name: 'Alphabet Inc.', sector: 'Technology', price: 152.40, change: 0.85, changePercent: 0.56, dayHigh: 153.20, dayLow: 151.10, bid: 152.35, ask: 152.45, sparkline: [151.2, 151.8, 152.0, 152.1, 152.4] }
+        ];
+
+        // State
+        let currentTab = 'watchlist';
+        let currentSymbol = 'AAPL';
+        let marketData = { stocks: DEFAULT_STOCKS };
+        let currentUser = null;
+        let mainChart = null;
+
+        // Local Storage State for Standalone Mode
+        let localUsers = JSON.parse(localStorage.getItem('qt_users') || '{"trader1":{"username":"trader1","fullName":"Alex Morgan","password":"password123","cash":100000,"holdings":{},"orders":[]}}');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            loadSavedTheme();
+            initChart();
+            openGatewayModal();
+            fetchMarket();
+
+            setInterval(() => {
+                simulateMarketTick();
+                renderTickerRibbon();
+                renderStockList();
+                updateActiveStockDetails();
+                calculateEstTotal();
+                if (currentUser) updatePortfolioUI();
+            }, 1000);
+
+            document.getElementById('watchlistSearch').addEventListener('input', renderStockList);
+        });
+
+        function simulateMarketTick() {
+            marketData.stocks.forEach(s => {
+                const delta = (Math.random() - 0.49) * (s.price * 0.005);
+                s.price = Math.max(1.0, +(s.price + delta).toFixed(2));
+                s.change = +(s.change + delta).toFixed(2);
+                s.changePercent = +((s.change / (s.price - s.change)) * 100).toFixed(2);
+                s.dayHigh = Math.max(s.dayHigh, s.price);
+                s.dayLow = Math.min(s.dayLow, s.price);
+                s.bid = +(s.price - 0.05).toFixed(2);
+                s.ask = +(s.price + 0.05).toFixed(2);
+                if (!s.sparkline) s.sparkline = [];
+                s.sparkline.push(s.price);
+                if (s.sparkline.length > 25) s.sparkline.shift();
+            });
+        }
+
+        function showToast(msg, isSuccess = true) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-animate px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-2 border pointer-events-auto ${isSuccess ? 'bg-emerald-950 text-emerald-200 border-emerald-500/40' : 'bg-rose-950 text-rose-200 border-rose-500/40'}`;
+            toast.innerHTML = `<span>${isSuccess ? '✔' : '✖'}</span> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function setTheme(themeClass) {
+            document.documentElement.className = themeClass;
+            localStorage.setItem('qt_theme', themeClass);
+            document.getElementById('themeDropdown').classList.add('hidden');
+            showToast(`Theme: ${themeClass.replace('theme-', '').toUpperCase()}`);
+            if (mainChart) mainChart.update();
+        }
+
+        function loadSavedTheme() {
+            const saved = localStorage.getItem('qt_theme') || 'theme-obsidian';
+            document.documentElement.className = saved;
+        }
+
+        function toggleThemeDropdown() {
+            document.getElementById('themeDropdown').classList.toggle('hidden');
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['watchlist', 'portfolio', 'orders', 'funds'].forEach(t => {
+                const section = document.getElementById(`section-${t}`);
+                const tabBtn = document.getElementById(`tab-${t}`);
+                if (section) section.classList.toggle('hidden', t !== tabId);
+                if (tabBtn) tabBtn.classList.toggle('active', t === tabId);
+            });
+            if (currentUser) updatePortfolioUI();
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('mainStockChart').getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 240);
+            grad.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+            grad.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [1,2,3,4,5,6,7,8,9,10],
+                    datasets: [{
+                        data: [180, 181, 180.5, 182, 183, 182.5, 184, 185, 184.8, 185.5],
+                        borderColor: '#3b82f6',
+                        borderWidth: 2.5,
+                        backgroundColor: grad,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 200 },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `$${Number(ctx.parsed.y).toFixed(2)}` } } },
+                    scales: {
+                        x: { display: false },
+                        y: { grid: { color: 'rgba(148, 163, 184, 0.15)' }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, callback: (v) => `$${v.toFixed(2)}` } }
+                    }
+                }
+            });
+        }
+
+        async function fetchMarket() {
+            try {
+                const res = await fetch('/api/market');
+                const data = await res.json();
+                if (data.stocks) marketData = data;
+            } catch (err) {}
+            renderTickerRibbon();
+            renderStockList();
+            updateActiveStockDetails();
+            calculateEstTotal();
+        }
+
+        function renderTickerRibbon() {
+            const ribbon = document.getElementById('tickerRibbon');
+            if (!marketData.stocks || marketData.stocks.length === 0) return;
+            const items = marketData.stocks.map(s => {
+                const isPos = s.change >= 0;
+                return `<span class="inline-flex items-center space-x-1 cursor-pointer hover:text-white" onclick="selectStock('${s.symbol}')">
+                    <strong class="text-white font-bold">${s.symbol}</strong>
+                    <span>$${s.price.toFixed(2)}</span>
+                    <span class="${isPos ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%</span>
+                </span>`;
+            }).join('');
+            ribbon.innerHTML = items + items;
+        }
+
+        function renderStockList() {
+            const container = document.getElementById('stockListContainer');
+            const search = (document.getElementById('watchlistSearch').value || '').toLowerCase();
+            if (!marketData.stocks) return;
+
+            const filtered = marketData.stocks.filter(s =>
+                s.symbol.toLowerCase().includes(search) || s.name.toLowerCase().includes(search)
+            );
+
+            container.innerHTML = filtered.map(s => {
+                const isPos = s.change >= 0;
+                const isSel = s.symbol === currentSymbol;
+                return `
+                    <div onclick="selectStock('${s.symbol}')"
+                         class="p-3 rounded-xl cursor-pointer transition border ${isSel ? 'bg-blue-600/10 border-blue-500/50 shadow-sm' : 'themed-input hover:border-slate-500'}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 text-white font-bold font-mono text-xs flex items-center justify-center">
+                                    ${s.symbol.substring(0, 3)}
+                                </div>
+                                <div>
+                                    <div class="font-extrabold text-xs text-white font-mono">${s.symbol}</div>
+                                    <div class="text-[10px] text-slate-400 truncate max-w-[110px] font-medium">${s.name}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs font-bold font-mono text-white">$${s.price.toFixed(2)}</div>
+                                <div class="text-[10px] font-mono font-bold ${isPos ? 'text-emerald-500' : 'text-rose-500'}">
+                                    ${isPos ? '+' : ''}${s.change.toFixed(2)} (${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectStock(symbol) {
+            currentSymbol = symbol;
+            document.getElementById('buyBtnSymbol').textContent = symbol;
+            document.getElementById('sellBtnSymbol').textContent = symbol;
+            renderStockList();
+            updateActiveStockDetails();
+        }
+
+        function updateActiveStockDetails() {
+            if (!marketData.stocks) return;
+            const s = marketData.stocks.find(st => st.symbol === currentSymbol) || marketData.stocks[0];
+            if (s) {
+                document.getElementById('activeSymbolBadge').textContent = s.symbol;
+                document.getElementById('activeStockName').textContent = s.name;
+                document.getElementById('activeStockSector').textContent = `${s.sector || 'Equities'} • Market Cap: $${s.marketCap || 100}B`;
+                document.getElementById('activeStockPrice').textContent = `$${s.price.toFixed(2)}`;
+
+                const isPos = s.change >= 0;
+                const chgEl = document.getElementById('activeStockChange');
+                chgEl.textContent = `${isPos ? '+' : ''}${s.change.toFixed(2)} (${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%)`;
+                chgEl.className = `text-xs font-bold font-mono ${isPos ? 'text-emerald-500' : 'text-rose-500'}`;
+
+                document.getElementById('statDayHigh').textContent = `$${s.dayHigh.toFixed(2)}`;
+                document.getElementById('statDayLow').textContent = `$${s.dayLow.toFixed(2)}`;
+                document.getElementById('statBid').textContent = `$${s.bid.toFixed(2)}`;
+                document.getElementById('statAsk').textContent = `$${s.ask.toFixed(2)}`;
+
+                if (mainChart && s.sparkline) {
+                    mainChart.data.labels = s.sparkline.map((_, i) => i);
+                    mainChart.data.datasets[0].data = s.sparkline;
+                    mainChart.data.datasets[0].borderColor = isPos ? '#10b981' : '#f43f5e';
+                    mainChart.update('none');
+                }
+            }
+        }
+
+        function setQuantityInput(qty) { document.getElementById('tradeQty').value = qty; calculateEstTotal(); }
+        function adjustShares(delta) { const inp = document.getElementById('tradeQty'); inp.value = Math.max(1, (parseInt(inp.value) || 0) + delta); calculateEstTotal(); }
+        function calculateEstTotal() {
+            const qty = parseInt(document.getElementById('tradeQty').value) || 0;
+            const s = marketData.stocks ? marketData.stocks.find(x => x.symbol === currentSymbol) : null;
+            const price = s ? s.price : 100.0;
+            document.getElementById('tradeEstTotal').textContent = `$${(qty * price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+
+        function executeTrade(side) {
+            if (!currentUser) return openGatewayModal();
+            const qty = parseInt(document.getElementById('tradeQty').value) || 10;
+            const s = marketData.stocks.find(x => x.symbol === currentSymbol);
+            const total = qty * s.price;
+            const u = localUsers[currentUser.username];
+
+            if (side === 'BUY') {
+                if (u.cash < total) return showToast('Insufficient funds!', false);
+                u.cash -= total;
+                if (!u.holdings[s.symbol]) u.holdings[s.symbol] = { qty: 0, totalCost: 0 };
+                u.holdings[s.symbol].qty += qty;
+                u.holdings[s.symbol].totalCost += total;
+                u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'BUY', symbol: s.symbol, qty, price: s.price, total, fee: 1.0 });
+                showToast(`🚀 Bought ${qty} shares of ${s.symbol}!`);
+            } else {
+                if (!u.holdings[s.symbol] || u.holdings[s.symbol].qty < qty) return showToast('Not enough shares to sell!', false);
+                u.cash += total;
+                u.holdings[s.symbol].qty -= qty;
+                u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: s.symbol, qty, price: s.price, total, fee: 1.0 });
+                showToast(`💰 Sold ${qty} shares of ${s.symbol}!`);
+            }
+
+            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            updatePortfolioUI();
+        }
+
+        function instantSellPosition(sym, qty) {
+            const u = localUsers[currentUser.username];
+            const s = marketData.stocks.find(x => x.symbol === sym);
+            const total = qty * s.price;
+            u.cash += total;
+            delete u.holdings[sym];
+            u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: sym, qty, price: s.price, total, fee: 1.0 });
+            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            showToast(`Sold position in ${sym}!`);
+            updatePortfolioUI();
+        }
+
+        function setFundAmount(amt) { document.getElementById('fundsInput').value = amt; }
+        function processFunds(action) {
+            if (!currentUser) return openGatewayModal();
+            const amt = parseFloat(document.getElementById('fundsInput').value) || 0;
+            if (amt <= 0) return showToast('Enter valid amount', false);
+            const u = localUsers[currentUser.username];
+            if (action === 'deposit') {
+                u.cash += amt;
+                showToast(`Added $${amt.toLocaleString()} to funds!`);
+            } else {
+                if (u.cash < amt) return showToast('Insufficient cash to withdraw', false);
+                u.cash -= amt;
+                showToast(`Withdrew $${amt.toLocaleString()}!`);
+            }
+            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            updatePortfolioUI();
+        }
+
+        function updatePortfolioUI() {
+            if (!currentUser) return;
+            const u = localUsers[currentUser.username];
+            let invested = 0;
+            let currentVal = 0;
+            const rows = [];
+
+            Object.entries(u.holdings || {}).forEach(([sym, h]) => {
+                if (h.qty <= 0) return;
+                const s = marketData.stocks.find(x => x.symbol === sym) || { price: 100 };
+                const avg = h.totalCost / h.qty;
+                const mkt = h.qty * s.price;
+                const pnl = mkt - (h.qty * avg);
+                const pnlPct = ((pnl / (h.qty * avg)) * 100) || 0;
+                invested += (h.qty * avg);
+                currentVal += mkt;
+
+                rows.push(`
+                    <tr class="hover:bg-slate-800/30 transition">
+                        <td class="py-3 font-bold text-white">${sym}</td>
+                        <td class="py-3">${h.qty} shares</td>
+                        <td class="py-3">$${avg.toFixed(2)}</td>
+                        <td class="py-3">$${s.price.toFixed(2)}</td>
+                        <td class="py-3 font-bold">$${(h.qty * avg).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        <td class="py-3 font-bold text-white">$${mkt.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        <td class="py-3 font-bold ${pnl >= 0 ? 'text-emerald-500' : 'text-rose-500'}">
+                            ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%)
+                        </td>
+                        <td class="py-3 text-right">
+                            <button onclick="instantSellPosition('${sym}', ${h.qty})" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-[11px] font-bold transition">
+                                Exit / Sell
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+
+            const equity = u.cash + currentVal;
+            document.getElementById('navCash').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('fundsAvailable').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('portCash').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('portTotalValue').textContent = `$${equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('portInvested').textContent = `$${invested.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+            const overallRet = invested > 0 ? (((currentVal - invested) / invested) * 100) : 0;
+            const retEl = document.getElementById('portReturn');
+            retEl.textContent = `${overallRet >= 0 ? '+' : ''}${overallRet.toFixed(2)}%`;
+            retEl.className = `text-xl font-bold font-mono mt-1 ${overallRet >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+
+            document.getElementById('holdingBadgeCount').textContent = `${rows.length} Stocks`;
+            document.getElementById('portfolioTableBody').innerHTML = rows.length ? rows.join('') : '<tr><td colspan="8" class="py-6 text-center text-slate-400 font-sans text-xs font-medium">No active stock holdings. Go to Watchlist to buy stocks!</td></tr>';
+
+            // Orders
+            const oRows = (u.orders || []).map(o => `
+                <tr class="hover:bg-slate-800/30 transition">
+                    <td class="py-2 text-slate-400">${o.id}</td>
+                    <td class="py-2 text-slate-400">${o.time}</td>
+                    <td class="py-2 font-bold ${o.type === 'BUY' ? 'text-emerald-500' : 'text-rose-500'}">${o.type}</td>
+                    <td class="py-2 font-bold text-white">${o.symbol}</td>
+                    <td class="py-2">${o.qty}</td>
+                    <td class="py-2">$${o.price.toFixed(2)}</td>
+                    <td class="py-2 font-bold text-white">$${o.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td class="py-2 text-slate-400">$${o.fee.toFixed(2)}</td>
+                    <td class="py-2"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold text-[10px]">EXECUTED</span></td>
+                </tr>
+            `);
+            document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="9" class="py-6 text-center text-slate-400 font-sans text-xs font-medium">No orders recorded yet.</td></tr>';
+        }
+
+        // Gateway Login & Registration
+        function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
+        function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
+        function toggleGatewayMode(isReg) {
+            document.getElementById('gatewayLoginForm').classList.toggle('hidden', isReg);
+            document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isReg);
+            document.getElementById('gatewayTitle').textContent = isReg ? 'Open Account' : 'Login to QuantumTrade';
+        }
+
+        function handleGatewayLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('gLoginUser').value;
+            const p = document.getElementById('gLoginPass').value;
+            if (!localUsers[u] || localUsers[u].password !== p) {
+                if (u === 'trader1' && p === 'password123') {
+                    localUsers[u] = { username: 'trader1', fullName: 'Alex Morgan', password: 'password123', cash: 100000, holdings: {}, orders: [] };
+                } else {
+                    return showToast('Invalid username or password', false);
+                }
+            }
+            currentUser = { username: u, fullName: localUsers[u].fullName };
+            hideGatewayModal();
+            updateNavUserBadge(currentUser);
+            updatePortfolioUI();
+            showToast(`Welcome, ${currentUser.fullName}!`);
+        }
+
+        function handleGatewayRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('gRegName').value;
+            const user = document.getElementById('gRegUser').value;
+            const email = document.getElementById('gRegEmail').value;
+            const pass = document.getElementById('gRegPass').value;
+            const cash = parseFloat(document.getElementById('gRegCash').value);
+
+            if (localUsers[user]) return showToast('Username already taken', false);
+
+            localUsers[user] = { username: user, fullName: name, email: email, password: pass, cash: cash, holdings: {}, orders: [] };
+            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+
+            currentUser = { username: user, fullName: name };
+            hideGatewayModal();
+            updateNavUserBadge(currentUser);
+            updatePortfolioUI();
+            showToast(`Account created for ${name}!`);
+        }
+
+        function updateNavUserBadge(user) {
+            const avatar = user.fullName ? user.fullName.substring(0, 2).toUpperCase() : user.username.substring(0, 2).toUpperCase();
+            document.getElementById('userAvatar').textContent = avatar;
+            document.getElementById('navUserName').textContent = user.fullName || user.username;
+        }
+
+        function openProfileDrawer() {
+            if (!currentUser) return openGatewayModal();
+            const u = localUsers[currentUser.username];
+            let curVal = 0;
+            Object.entries(u.holdings || {}).forEach(([sym, h]) => {
+                const s = marketData.stocks.find(x => x.symbol === sym) || { price: 100 };
+                curVal += h.qty * s.price;
+            });
+            document.getElementById('drawerAvatar').textContent = currentUser.fullName ? currentUser.fullName.substring(0, 2).toUpperCase() : 'U';
+            document.getElementById('drawerFullName').textContent = currentUser.fullName;
+            document.getElementById('drawerUsername').textContent = `@${currentUser.username}`;
+            document.getElementById('drawerAccId').textContent = `ACC-${currentUser.username.toUpperCase()}`;
+            document.getElementById('drawerEmail').textContent = u.email || `${currentUser.username}@trade.com`;
+            document.getElementById('drawerNetWorth').textContent = `$${(u.cash + curVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('profileDrawer').classList.remove('hidden');
+        }
+
+        function closeProfileDrawer() { document.getElementById('profileDrawer').classList.add('hidden'); }
+        function handleLogout() {
+            currentUser = null;
+            closeProfileDrawer();
+            openGatewayModal();
+            showToast('Logged out successfully.');
+        }
+
+        function downloadCSVReport() {
+            if (!currentUser) return;
+            const u = localUsers[currentUser.username];
+            let csv = "Order ID,Time,Type,Symbol,Quantity,Price,Total,Fee\n";
+            (u.orders || []).forEach(o => {
+                csv += `${o.id},${o.time},${o.type},${o.symbol},${o.qty},${o.price},${o.total},${o.fee}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `trades_statement_${currentUser.username}.csv`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
