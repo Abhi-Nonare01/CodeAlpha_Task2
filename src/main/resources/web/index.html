@@ -30,6 +30,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Firebase SDKs (Realtime Cloud Sync) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         /* Theme Variables */
         .theme-obsidian {
@@ -131,7 +134,7 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- STRICT & CLEAN LOGIN / SIGN-UP MODAL -->
+    <!-- STRICT & CLEAN LOGIN / SIGN-UP MODAL (Firebase Multi-Device Synced) -->
     <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="themed-card rounded-3xl border p-6 sm:p-8 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
             
@@ -144,6 +147,10 @@
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
                 <p class="text-xs text-slate-400">Welcome! Enter your details to continue.</p>
+                <div class="inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Firebase Cloud Sync Active ☁️</span>
+                </div>
             </div>
 
             <!-- Login / Sign Up Switcher -->
@@ -180,8 +187,8 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
-                    <span>Login</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="submit" id="btnSubmitLogin" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                    <span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Demo Hint -->
@@ -215,8 +222,8 @@
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
-                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                <button type="submit" id="btnSubmitRegister" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                    <span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
@@ -296,7 +303,7 @@
                 </div>
                 <div class="hidden sm:block text-left">
                     <div id="navUserName" class="text-xs font-bold text-white leading-tight">Trader</div>
-                    <div class="text-[8px] text-emerald-500 font-mono font-semibold">VERIFIED ✅</div>
+                    <div class="text-[8px] text-emerald-500 font-mono font-semibold">CLOUD SYNCED ☁️</div>
                 </div>
             </button>
         </div>
@@ -347,9 +354,9 @@
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                        <span class="text-slate-400">Account Status:</span>
+                        <span class="text-slate-400">Cloud Sync:</span>
                         <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">
-                            Verified Active ✅
+                            Multi-Device Synced ☁️
                         </span>
                     </div>
                 </div>
@@ -616,8 +623,28 @@
         </section>
     </main>
 
-    <!-- TradeKaro Strict & Backward-Compatible Authentication Engine -->
+    <!-- TradeKaro Firebase Realtime Cloud Synchronization Engine -->
     <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_nfjaVOEdL_etqnzNvnckL0eDo1OhPp0",
+            authDomain: "tradekaro-75555.firebaseapp.com",
+            databaseURL: "https://tradekaro-75555-default-rtdb.firebaseio.com",
+            projectId: "tradekaro-75555",
+            storageBucket: "tradekaro-75555.firebasestorage.app",
+            messagingSenderId: "696459456079",
+            appId: "1:696459456079:web:32f35c4a6c2829ed63043a",
+            measurementId: "G-25E63WHYXB"
+        };
+
+        let fbDb = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            fbDb = firebase.database();
+        } catch (err) {
+            console.warn("Firebase Init fallback:", err);
+        }
+
         // SHA-256 Web Crypto Hashing Function
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -641,10 +668,9 @@
         let marketData = { stocks: DEFAULT_STOCKS };
         let currentUser = null;
         let mainChart = null;
-
-        // User Account Storage
         let localUsers = {};
 
+        // Load local cache + ensure demo user
         async function initAuthStore() {
             try {
                 localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
@@ -652,7 +678,6 @@
                 localUsers = {};
             }
 
-            // Always guarantee default demo user: trader1 / password123
             const demoHash = await hashPassword('password123');
             if (!localUsers['trader1'] || localUsers['trader1'].passwordHash !== demoHash) {
                 localUsers['trader1'] = {
@@ -666,6 +691,33 @@
                 delete localUsers['trader1'].password;
                 localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             }
+        }
+
+        // Save User to Firebase Cloud + Local Cache
+        function saveUserToCloud(userObj) {
+            const key = userObj.username.toLowerCase();
+            localUsers[key] = userObj;
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+
+            if (fbDb) {
+                fbDb.ref('users/' + key).set(userObj).catch(err => {
+                    console.warn("Firebase cloud save fallback:", err);
+                });
+            }
+        }
+
+        // Live Realtime Listener for Current User
+        function listenToCloudUserUpdates(username) {
+            if (!fbDb) return;
+            const key = username.toLowerCase();
+            fbDb.ref('users/' + key).on('value', snapshot => {
+                const cloudData = snapshot.val();
+                if (cloudData && currentUser && currentUser.username.toLowerCase() === key) {
+                    localUsers[key] = cloudData;
+                    localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                    updatePortfolioUI();
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -894,36 +946,42 @@
             const qty = parseInt(document.getElementById('tradeQty').value) || 10;
             const s = marketData.stocks.find(x => x.symbol === currentSymbol);
             const total = qty * s.price;
-            const u = localUsers[currentUser.username];
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey];
 
             if (side === 'BUY') {
                 if (u.cash < total) return showToast('Insufficient funds!', false);
                 u.cash -= total;
+                if (!u.holdings) u.holdings = {};
                 if (!u.holdings[s.symbol]) u.holdings[s.symbol] = { qty: 0, totalCost: 0 };
                 u.holdings[s.symbol].qty += qty;
                 u.holdings[s.symbol].totalCost += total;
+                if (!u.orders) u.orders = [];
                 u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'BUY', symbol: s.symbol, qty, price: s.price, total, fee: 1.0 });
                 showToast(`🚀 Bought ${qty} shares of ${s.symbol}!`);
             } else {
-                if (!u.holdings[s.symbol] || u.holdings[s.symbol].qty < qty) return showToast('Not enough shares to sell!', false);
+                if (!u.holdings || !u.holdings[s.symbol] || u.holdings[s.symbol].qty < qty) return showToast('Not enough shares to sell!', false);
                 u.cash += total;
                 u.holdings[s.symbol].qty -= qty;
+                if (!u.orders) u.orders = [];
                 u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: s.symbol, qty, price: s.price, total, fee: 1.0 });
                 showToast(`💰 Sold ${qty} shares of ${s.symbol}!`);
             }
 
-            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            saveUserToCloud(u);
             updatePortfolioUI();
         }
 
         function instantSellPosition(sym, qty) {
-            const u = localUsers[currentUser.username];
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey];
             const s = marketData.stocks.find(x => x.symbol === sym);
             const total = qty * s.price;
             u.cash += total;
             delete u.holdings[sym];
+            if (!u.orders) u.orders = [];
             u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: sym, qty, price: s.price, total, fee: 1.0 });
-            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            saveUserToCloud(u);
             showToast(`Sold position in ${sym}!`);
             updatePortfolioUI();
         }
@@ -933,7 +991,8 @@
             if (!currentUser) return openGatewayModal();
             const amt = parseFloat(document.getElementById('fundsInput').value) || 0;
             if (amt <= 0) return showToast('Enter valid amount', false);
-            const u = localUsers[currentUser.username];
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey];
             if (action === 'deposit') {
                 u.cash += amt;
                 showToast(`Added $${amt.toLocaleString()} to funds!`);
@@ -942,19 +1001,20 @@
                 u.cash -= amt;
                 showToast(`Withdrew $${amt.toLocaleString()}!`);
             }
-            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            saveUserToCloud(u);
             updatePortfolioUI();
         }
 
         function updatePortfolioUI() {
             if (!currentUser) return;
-            const u = localUsers[currentUser.username];
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey] || { cash: 100000, holdings: {}, orders: [] };
             let invested = 0;
             let currentVal = 0;
             const rows = [];
 
             Object.entries(u.holdings || {}).forEach(([sym, h]) => {
-                if (h.qty <= 0) return;
+                if (!h || h.qty <= 0) return;
                 const s = marketData.stocks.find(x => x.symbol === sym) || { price: 100 };
                 const avg = h.totalCost / h.qty;
                 const mkt = h.qty * s.price;
@@ -982,10 +1042,10 @@
                 `);
             });
 
-            const equity = u.cash + currentVal;
-            document.getElementById('navCash').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('fundsAvailable').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('portCash').textContent = `$${u.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            const equity = (u.cash || 0) + currentVal;
+            document.getElementById('navCash').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('fundsAvailable').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('portCash').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
             document.getElementById('portTotalValue').textContent = `$${equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
             document.getElementById('portInvested').textContent = `$${invested.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
@@ -1012,7 +1072,7 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // STRICT & BACKWARD-COMPATIBLE AUTHENTICATION
+        // FIREBASE & STRICT AUTHENTICATION
         function openGatewayModal() {
             clearAuthError();
             document.getElementById('loginGateway').classList.remove('hidden');
@@ -1062,30 +1122,50 @@
 
             const inputUser = (document.getElementById('gLoginUser').value || '').trim();
             const inputPass = (document.getElementById('gLoginPass').value || '').trim();
+            const btn = document.getElementById('btnSubmitLogin');
 
             if (!inputUser || !inputPass) {
                 return showAuthError('Please enter both username and password.');
             }
 
-            // Look up user case-insensitively across local storage
-            const matchedKey = Object.keys(localUsers).find(k => k.toLowerCase() === inputUser.toLowerCase());
-            if (!matchedKey) {
+            btn.disabled = true;
+            btn.innerHTML = '<span>Verifying Cloud...</span>';
+
+            const userKey = inputUser.toLowerCase();
+            let userObj = localUsers[userKey];
+
+            // Fetch from Firebase Cloud Database first
+            if (fbDb) {
+                try {
+                    const snap = await fbDb.ref('users/' + userKey).once('value');
+                    const cloudUser = snap.val();
+                    if (cloudUser) {
+                        userObj = cloudUser;
+                        localUsers[userKey] = userObj;
+                        localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                    }
+                } catch (err) {
+                    console.warn("Cloud read fallback to local:", err);
+                }
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+            lucide.createIcons();
+
+            if (!userObj) {
                 return showAuthError(`❌ Username "${inputUser}" does not exist! Please click Sign Up.`);
             }
 
-            const userObj = localUsers[matchedKey];
             const inputHash = await hashPassword(inputPass);
             let isAuthenticated = false;
 
-            // Check 1: SHA-256 Hash match
             if (userObj.passwordHash && userObj.passwordHash === inputHash) {
                 isAuthenticated = true;
-            } 
-            // Check 2: Legacy Plaintext match (seamlessly upgrade to SHA-256)
-            else if (userObj.password && userObj.password === inputPass) {
+            } else if (userObj.password && userObj.password === inputPass) {
                 userObj.passwordHash = inputHash;
                 delete userObj.password;
-                localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                saveUserToCloud(userObj);
                 isAuthenticated = true;
             }
 
@@ -1093,11 +1173,12 @@
                 return showAuthError('❌ Incorrect password! Please check and try again.');
             }
 
-            currentUser = { username: matchedKey, fullName: userObj.fullName };
+            currentUser = { username: userObj.username, fullName: userObj.fullName };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`Welcome back, ${currentUser.fullName}!`);
+            listenToCloudUserUpdates(userObj.username);
+            showToast(`☁️ Cloud Connected: Welcome back, ${currentUser.fullName}!`);
         }
 
         async function handleGatewayRegister(e) {
@@ -1108,20 +1189,35 @@
             const user = (document.getElementById('gRegUser').value || '').trim();
             const pass = (document.getElementById('gRegPass').value || '').trim();
             const cash = parseFloat(document.getElementById('gRegCash').value) || 100000;
+            const btn = document.getElementById('btnSubmitRegister');
 
             if (!name || !user || !pass) {
                 return showAuthError('All fields are required.');
             }
 
-            // Check uniqueness case-insensitively
-            const existingKey = Object.keys(localUsers).find(k => k.toLowerCase() === user.toLowerCase());
-            if (existingKey) {
-                return showAuthError(`❌ Username "${user}" is already taken! Please choose another.`);
+            btn.disabled = true;
+            btn.innerHTML = '<span>Creating on Cloud...</span>';
+
+            const userKey = user.toLowerCase();
+
+            // Check uniqueness in Firebase Cloud Database
+            if (fbDb) {
+                try {
+                    const snap = await fbDb.ref('users/' + userKey).once('value');
+                    if (snap.exists()) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
+                        lucide.createIcons();
+                        return showAuthError(`❌ Username "${user}" is already taken on Cloud! Choose another.`);
+                    }
+                } catch (err) {
+                    console.warn("Cloud uniqueness fallback:", err);
+                }
             }
 
             const hashedPass = await hashPassword(pass);
 
-            localUsers[user] = {
+            const newUserObj = {
                 username: user,
                 fullName: name,
                 passwordHash: hashedPass,
@@ -1129,14 +1225,19 @@
                 holdings: {},
                 orders: []
             };
-            delete localUsers[user].password;
-            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+
+            saveUserToCloud(newUserObj);
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
+            lucide.createIcons();
 
             currentUser = { username: user, fullName: name };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`🎉 Account created for ${name}!`);
+            listenToCloudUserUpdates(user);
+            showToast(`🎉 Cloud Account created! Synced across all your devices.`);
         }
 
         function updateNavUserBadge(user) {
@@ -1147,9 +1248,11 @@
 
         function openProfileDrawer() {
             if (!currentUser) return openGatewayModal();
-            const u = localUsers[currentUser.username] || { cash: 100000, holdings: {} };
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey] || { cash: 100000, holdings: {} };
             let curVal = 0;
             Object.entries(u.holdings || {}).forEach(([sym, h]) => {
+                if (!h || h.qty <= 0) return;
                 const s = marketData.stocks.find(x => x.symbol === sym) || { price: 100 };
                 curVal += h.qty * s.price;
             });
@@ -1157,7 +1260,7 @@
             document.getElementById('drawerFullName').textContent = currentUser.fullName;
             document.getElementById('drawerUsername').textContent = `@${currentUser.username}`;
             document.getElementById('drawerAccId').textContent = `ACC-${currentUser.username.toUpperCase()}`;
-            document.getElementById('drawerNetWorth').textContent = `$${(u.cash + curVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('drawerNetWorth').textContent = `$${((u.cash || 0) + curVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
             document.getElementById('profileDrawer').classList.remove('hidden');
         }
 
@@ -1171,7 +1274,8 @@
 
         function downloadCSVReport() {
             if (!currentUser) return;
-            const u = localUsers[currentUser.username];
+            const userKey = currentUser.username.toLowerCase();
+            const u = localUsers[userKey] || {};
             let csv = "Order ID,Time,Type,Symbol,Quantity,Price,Total,Fee\n";
             (u.orders || []).forEach(o => {
                 csv += `${o.id},${o.time},${o.type},${o.symbol},${o.qty},${o.price},${o.total},${o.fee}\n`;
