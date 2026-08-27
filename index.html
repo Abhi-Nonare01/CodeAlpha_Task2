@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TradeKaro | Simple &amp; Smart Stock Trading</title>
+    <title>TradeKaro | Stock Trading</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,6 +114,7 @@
         .auth-tab.active {
             background-color: #2563eb;
             color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
         .toast-animate { animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -127,93 +128,89 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- SIMPLE LOGIN / SIGN-UP MODAL (TradeKaro SHA-256 Encrypted) -->
-    <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
-        <div class="themed-card rounded-3xl border p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
+    <!-- CLEAN & SIMPLE LOGIN / SIGN-UP MODAL (User Friendly) -->
+    <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+        <div class="themed-card rounded-3xl border p-6 sm:p-8 max-w-sm w-full shadow-2xl space-y-5 relative my-auto">
             
-            <!-- App Logo & Brand Name -->
-            <div class="text-center space-y-1">
-                <div class="inline-flex p-2.5 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-1">
+            <!-- Simple App Header -->
+            <div class="text-center space-y-1.5">
+                <div class="inline-flex p-3 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30 mb-1">
                     <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
-                <h2 class="text-2xl font-black tracking-tight text-white flex items-center justify-center">
+                <h2 class="text-2xl font-extrabold tracking-tight text-white">
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
-                <p class="text-xs text-slate-400">Apka Apna Stock Trading Platform 📈</p>
-                <div class="inline-flex items-center space-x-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                    <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
-                    <span>SHA-256 Military Encrypted 🛡️</span>
-                </div>
+                <p class="text-xs text-slate-400">Welcome! Please enter your details.</p>
             </div>
 
-            <!-- Login / Sign Up Switcher Tabs -->
-            <div class="flex rounded-xl themed-input border p-1 text-xs font-bold">
-                <button type="button" onclick="toggleAuthTab(false)" id="tabAuthLogin" class="auth-tab active flex-1 py-2 rounded-lg transition text-center">
+            <!-- Login / Sign Up Switcher -->
+            <div class="flex rounded-2xl themed-input border p-1 text-xs font-semibold">
+                <button type="button" onclick="toggleAuthTab(false)" id="tabAuthLogin" class="auth-tab active flex-1 py-2 rounded-xl transition text-center">
                     Login
                 </button>
-                <button type="button" onclick="toggleAuthTab(true)" id="tabAuthRegister" class="auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center">
+                <button type="button" onclick="toggleAuthTab(true)" id="tabAuthRegister" class="auth-tab flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center">
                     Sign Up
                 </button>
             </div>
 
-            <!-- Demo Login Hint -->
-            <div id="demoHintBox" class="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center text-[11px] text-blue-400 font-medium">
-                💡 Demo: User: <strong class="text-white font-mono">trader1</strong> | Pass: <strong class="text-white font-mono">password123</strong>
-            </div>
-
-            <!-- LOGIN FORM (SHA-256 Hashed Validation) -->
-            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3">
+            <!-- LOGIN FORM -->
+            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3.5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Username</label>
                     <div class="relative">
-                        <i data-lucide="user" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
-                        <input type="text" id="gLoginUser" required value="trader1" placeholder="Enter username"
-                               class="w-full themed-input rounded-xl pl-9 pr-3 py-2 text-xs border focus:outline-none focus:border-blue-500 font-medium">
+                        <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="text" id="gLoginUser" required value="trader1" placeholder="Enter your username"
+                               class="w-full themed-input rounded-xl pl-10 pr-3 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-medium transition">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
                     <div class="relative">
-                        <i data-lucide="key" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
-                        <input type="password" id="gLoginPass" required value="password123" placeholder="Enter password"
-                               class="w-full themed-input rounded-xl pl-9 pr-8 py-2 text-xs border focus:outline-none focus:border-blue-500 font-medium">
-                        <button type="button" onclick="togglePasswordVisibility('gLoginPass', this)" class="absolute right-2.5 top-2.5 text-slate-500 hover:text-slate-300">
+                        <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="password" id="gLoginPass" required value="password123" placeholder="Enter your password"
+                               class="w-full themed-input rounded-xl pl-10 pr-9 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-medium transition">
+                        <button type="button" onclick="togglePasswordVisibility('gLoginPass', this)" class="absolute right-3 top-3 text-slate-400 hover:text-white">
                             <i data-lucide="eye" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
-                    <span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                    <span>Login</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
+
+                <!-- Subtle Demo Hint -->
+                <p class="text-center text-[11px] text-slate-500 pt-1">
+                    Demo: <span class="text-slate-300 font-mono">trader1</span> / <span class="text-slate-300 font-mono">password123</span>
+                </p>
             </form>
 
-            <!-- SIGN UP / REGISTER FORM (Encrypted Password Storage) -->
-            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-2.5 hidden">
+            <!-- SIGN UP / REGISTER FORM -->
+            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-3 hidden">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Full Name</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
                     <input type="text" id="gRegName" required placeholder="e.g. Abhishek Nonare"
-                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
+                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Unique Username</label>
-                    <input type="text" id="gRegUser" required placeholder="Choose unique username"
-                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Username</label>
+                    <input type="text" id="gRegUser" required placeholder="Choose a username"
+                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Password</label>
-                    <input type="password" id="gRegPass" required placeholder="Create password"
-                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
+                    <input type="password" id="gRegPass" required placeholder="Create a password"
+                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Starting Capital</label>
-                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500 font-mono">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Starting Balance</label>
+                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-mono transition">
                         <option value="100000">$100,000.00 (Standard)</option>
                         <option value="50000">$50,000.00</option>
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
-                    <span>Create Encrypted Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
@@ -344,9 +341,9 @@
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                        <span class="text-slate-400">Security Standard:</span>
+                        <span class="text-slate-400">Account Status:</span>
                         <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">
-                            SHA-256 Hashed 🛡️
+                            Verified Active ✅
                         </span>
                     </div>
                 </div>
@@ -613,7 +610,7 @@
         </section>
     </main>
 
-    <!-- TradeKaro Military-Grade Cryptographic Engine -->
+    <!-- TradeKaro Engine Script -->
     <script>
         // SHA-256 Web Crypto Hashing Function
         async function hashPassword(password) {
@@ -639,7 +636,7 @@
         let currentUser = null;
         let mainChart = null;
 
-        // User Account Storage (Encrypted)
+        // User Account Storage
         let localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
 
         // Pre-seed demo user with SHA-256 hash
@@ -654,7 +651,7 @@
                     holdings: { 'AAPL': { qty: 25, totalCost: 4500 } },
                     orders: [{ id: 'ORD-1001', time: '10:30:00 AM', type: 'BUY', symbol: 'AAPL', qty: 25, price: 180.00, total: 4500, fee: 1.0 }]
                 };
-                delete localUsers['trader1'].password; // NEVER store plain password
+                delete localUsers['trader1'].password;
                 localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             }
         })();
@@ -1002,16 +999,15 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // SHA-256 ENCRYPTED AUTHENTICATION
+        // AUTHENTICATION LOGIC (Clean & Simple)
         function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
         function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
 
         function toggleAuthTab(isRegister) {
             document.getElementById('gatewayLoginForm').classList.toggle('hidden', isRegister);
             document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isRegister);
-            document.getElementById('demoHintBox').classList.toggle('hidden', isRegister);
-            document.getElementById('tabAuthLogin').className = isRegister ? 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center' : 'auth-tab active flex-1 py-2 rounded-lg transition text-center';
-            document.getElementById('tabAuthRegister').className = isRegister ? 'auth-tab active flex-1 py-2 rounded-lg transition text-center' : 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center';
+            document.getElementById('tabAuthLogin').className = isRegister ? 'auth-tab flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center' : 'auth-tab active flex-1 py-2 rounded-xl transition text-center';
+            document.getElementById('tabAuthRegister').className = isRegister ? 'auth-tab active flex-1 py-2 rounded-xl transition text-center' : 'auth-tab flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center';
         }
 
         function togglePasswordVisibility(inputId, btn) {
@@ -1035,7 +1031,7 @@
 
             const inputHash = await hashPassword(p);
 
-            // Universal Cross-Device Resolution with SHA-256 Hash
+            // Universal Cross-Device Resolution
             if (!localUsers[u]) {
                 localUsers[u] = {
                     username: u,
@@ -1048,10 +1044,9 @@
                 delete localUsers[u].password;
                 localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             } else {
-                // Secure SHA-256 Hash Comparison
                 const storedHash = localUsers[u].passwordHash;
                 if (storedHash && storedHash !== inputHash) {
-                    return showToast('❌ Incorrect Password! Access Denied.', false);
+                    return showToast('❌ Incorrect Password! Please try again.', false);
                 }
             }
 
@@ -1059,7 +1054,7 @@
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`🛡️ Secure Login: Welcome back, ${currentUser.fullName}!`);
+            showToast(`Welcome back, ${currentUser.fullName}!`);
         }
 
         async function handleGatewayRegister(e) {
@@ -1073,7 +1068,6 @@
 
             const hashedPass = await hashPassword(pass);
 
-            // Save encrypted hash (NEVER store plain text password)
             localUsers[user] = {
                 username: user,
                 fullName: name,
@@ -1089,7 +1083,7 @@
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`🛡️ Account encrypted & created for ${name}!`);
+            showToast(`🎉 Account created for ${name}!`);
         }
 
         function updateNavUserBadge(user) {
