@@ -127,7 +127,32 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- SIMPLE & USER-FRIENDLY LOGIN / SIGN-UP MODAL (TradeKaro with Cross-Device Cloud Sync) -->
+    <!-- DEVICE LINK / QR SYNC MODAL (WhatsApp Web Style) -->
+    <div id="deviceSyncModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="themed-card rounded-3xl border p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 relative my-auto text-center">
+            <button onclick="closeDeviceSyncModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="inline-flex p-2.5 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg mb-1">
+                <i data-lucide="qr-code" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">📲 Link to Mobile Phone</h3>
+            <p class="text-xs text-slate-400">Apne mobile ke camera se yeh QR code scan karein ya 1-Click link copy karein:</p>
+            
+            <div class="p-3 bg-white rounded-2xl mx-auto inline-block shadow-inner">
+                <img id="syncQrImage" src="" alt="Scan to Login on Mobile" class="w-44 h-44 mx-auto rounded-lg">
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button onclick="copyMobileSyncLink()" class="w-full py-2.5 rounded-xl font-bold text-xs bg-blue-600 hover:bg-blue-500 text-white shadow-lg transition flex items-center justify-center space-x-1.5">
+                    <i data-lucide="copy" class="w-4 h-4"></i> <span>Copy Mobile Login Link</span>
+                </button>
+                <p class="text-[10px] text-slate-400">Is link ko WhatsApp ya browser me paste karte hi mobile par direct login ho jayega!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN / SIGN-UP MODAL (TradeKaro) -->
     <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
         <div class="themed-card rounded-3xl border p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
             
@@ -140,11 +165,6 @@
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
                 <p class="text-xs text-slate-400">Apka Apna Stock Trading Platform 📈</p>
-                <!-- Cloud Sync Status Pill -->
-                <div id="cloudSyncBadge" class="inline-flex items-center space-x-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Multi-Device Cloud Active ☁️</span>
-                </div>
             </div>
 
             <!-- Login / Sign Up Switcher Tabs -->
@@ -162,7 +182,7 @@
                 💡 Demo: User: <strong class="text-white font-mono">trader1</strong> | Pass: <strong class="text-white font-mono">password123</strong>
             </div>
 
-            <!-- LOGIN FORM (Strict Unique Validation & Multi-Device Sync) -->
+            <!-- LOGIN FORM (Strict Unique Validation) -->
             <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
@@ -183,12 +203,12 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
                     <span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
 
-            <!-- SIGN UP / REGISTER FORM (Multi-Device Cloud Saved) -->
+            <!-- SIGN UP / REGISTER FORM -->
             <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-2.5 hidden">
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Full Name</label>
@@ -213,8 +233,8 @@
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" id="regSubmitBtn" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
-                    <span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>
+                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
@@ -261,6 +281,12 @@
 
         <!-- Right Action Pill -->
         <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- 📲 Device Sync Button -->
+            <button onclick="openDeviceSyncModal()" class="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-xl themed-input border hover:border-blue-500 transition text-xs font-bold text-blue-400" title="Link Phone">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+                <span>Link Phone</span>
+            </button>
+
             <div onclick="switchTab('funds')" class="cursor-pointer flex items-center space-x-1.5 themed-input px-2.5 py-1 rounded-xl border transition text-xs font-mono">
                 <span class="text-[10px] text-slate-400 hidden sm:inline">Cash:</span>
                 <span id="navCash" class="font-bold text-emerald-500">$0.00</span>
@@ -351,6 +377,11 @@
                         </span>
                     </div>
                 </div>
+
+                <!-- 📲 Device Link Button in Drawer -->
+                <button onclick="openDeviceSyncModal()" class="w-full py-2.5 rounded-xl font-bold text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 transition flex items-center justify-center space-x-2">
+                    <i data-lucide="smartphone" class="w-4 h-4"></i> <span>Link / Login on Phone (QR Code)</span>
+                </button>
 
                 <div class="space-y-2 text-xs font-mono">
                     <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
@@ -614,10 +645,8 @@
         </section>
     </main>
 
-    <!-- TradeKaro Global Cloud Synchronization Engine -->
+    <!-- TradeKaro Engine Script -->
     <script>
-        const CLOUD_SYNC_URL = 'https://api.restful-api.dev/objects/ff8081819ff5b11001a0446d44b23b71';
-
         const DEFAULT_STOCKS = [
             { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', price: 185.50, change: 2.45, changePercent: 1.34, dayHigh: 186.20, dayLow: 183.10, bid: 185.45, ask: 185.55, sparkline: [183.2, 184.0, 183.8, 185.1, 185.5] },
             { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Semiconductors', price: 875.20, change: 18.50, changePercent: 2.16, dayHigh: 880.00, dayLow: 855.00, bid: 875.10, ask: 875.30, sparkline: [858, 862, 869, 871, 875.2] },
@@ -633,54 +662,55 @@
         let currentUser = null;
         let mainChart = null;
 
-        // Local cache of users
+        // Local users storage
         let localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
         if (!localUsers['trader1']) {
             localUsers['trader1'] = { username: 'trader1', fullName: 'Alex Morgan', password: 'password123', cash: 100000, holdings: { 'AAPL': { qty: 25, totalCost: 4500 } }, orders: [{ id: 'ORD-1001', time: '10:30:00 AM', type: 'BUY', symbol: 'AAPL', qty: 25, price: 180.00, total: 4500, fee: 1.0 }] };
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
         }
 
-        // Real-Time Multi-Device Cloud Sync Methods
-        async function syncFromCloud() {
+        // Automatic URL Account Import Handler (for Instant Mobile Login)
+        function checkUrlAccountImport() {
             try {
-                const res = await fetch(CLOUD_SYNC_URL);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.data && data.data.users) {
-                        localUsers = { ...localUsers, ...data.data.users };
+                let encodedData = '';
+                if (window.location.hash && window.location.hash.includes('acc=')) {
+                    encodedData = window.location.hash.split('acc=')[1];
+                } else if (window.location.search && window.location.search.includes('acc=')) {
+                    const params = new URLSearchParams(window.location.search);
+                    encodedData = params.get('acc');
+                }
+
+                if (encodedData) {
+                    const decoded = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
+                    if (decoded && decoded.username) {
+                        localUsers[decoded.username] = decoded;
                         localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                        currentUser = { username: decoded.username, fullName: decoded.fullName };
+                        hideGatewayModal();
+                        updateNavUserBadge(currentUser);
+                        updatePortfolioUI();
+                        showToast(`📲 Mobile Synced: Welcome ${currentUser.fullName}!`);
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        return true;
                     }
                 }
-            } catch (e) {
-                console.log('Cloud sync silent fetch:', e);
+            } catch (err) {
+                console.log('URL import error:', err);
             }
+            return false;
         }
 
-        async function syncToCloud() {
-            try {
-                const payload = {
-                    name: "TradeKaro_Master_Users_Registry_v1",
-                    data: { users: localUsers }
-                };
-                await fetch(CLOUD_SYNC_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            } catch (e) {
-                console.log('Cloud sync push:', e);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             loadSavedTheme();
             initChart();
-            openGatewayModal();
+            
+            const imported = checkUrlAccountImport();
+            if (!imported) {
+                openGatewayModal();
+            }
+            
             fetchMarket();
-
-            // Perform initial cloud sync
-            await syncFromCloud();
 
             setInterval(() => {
                 simulateMarketTick();
@@ -690,9 +720,6 @@
                 calculateEstTotal();
                 if (currentUser) updatePortfolioUI();
             }, 1000);
-
-            // Periodic background cloud sync every 5 seconds
-            setInterval(syncFromCloud, 5000);
 
             document.getElementById('watchlistSearch').addEventListener('input', renderStockList);
         });
@@ -898,7 +925,7 @@
             document.getElementById('tradeEstTotal').textContent = `$${(qty * price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
         }
 
-        async function executeTrade(side) {
+        function executeTrade(side) {
             if (!currentUser) return openGatewayModal();
             const qty = parseInt(document.getElementById('tradeQty').value) || 10;
             const s = marketData.stocks.find(x => x.symbol === currentSymbol);
@@ -922,7 +949,6 @@
             }
 
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
-            syncToCloud();
             updatePortfolioUI();
         }
 
@@ -934,7 +960,6 @@
             delete u.holdings[sym];
             u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: sym, qty, price: s.price, total, fee: 1.0 });
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
-            syncToCloud();
             showToast(`Sold position in ${sym}!`);
             updatePortfolioUI();
         }
@@ -954,7 +979,6 @@
                 showToast(`Withdrew $${amt.toLocaleString()}!`);
             }
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
-            syncToCloud();
             updatePortfolioUI();
         }
 
@@ -1024,7 +1048,7 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // STRICT AUTHENTICATION (Cross-Device Cloud Sync Enabled)
+        // STRICT AUTHENTICATION
         function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
         function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
 
@@ -1048,29 +1072,17 @@
             lucide.createIcons();
         }
 
-        async function handleGatewayLogin(e) {
+        function handleGatewayLogin(e) {
             e.preventDefault();
             const u = (document.getElementById('gLoginUser').value || '').trim();
             const p = (document.getElementById('gLoginPass').value || '').trim();
 
             if (!u || !p) return showToast('Please enter username & password', false);
 
-            const btn = document.getElementById('loginSubmitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span>Checking Cloud...</span>';
-
-            // Sync latest cloud users before checking login
-            await syncFromCloud();
-            btn.disabled = false;
-            btn.innerHTML = '<span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
-            lucide.createIcons();
-
-            // Strict Validation: Username must exist
             if (!localUsers[u]) {
                 return showToast('❌ Username does not exist! Please Sign Up.', false);
             }
 
-            // Strict Validation: Password must match exactly
             if (localUsers[u].password !== p) {
                 return showToast('❌ Incorrect Password! Please try again.', false);
             }
@@ -1082,7 +1094,7 @@
             showToast(`Welcome back to TradeKaro, ${currentUser.fullName}!`);
         }
 
-        async function handleGatewayRegister(e) {
+        function handleGatewayRegister(e) {
             e.preventDefault();
             const name = (document.getElementById('gRegName').value || '').trim();
             const user = (document.getElementById('gRegUser').value || '').trim();
@@ -1091,35 +1103,18 @@
 
             if (!name || !user || !pass) return showToast('All fields are required', false);
 
-            const btn = document.getElementById('regSubmitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span>Creating in Cloud...</span>';
-
-            await syncFromCloud();
-
-            // Strict Validation: Username must be unique across all devices
             if (localUsers[user]) {
-                btn.disabled = false;
-                btn.innerHTML = '<span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>';
-                lucide.createIcons();
-                return showToast('❌ Username is already taken on Cloud! Choose another.', false);
+                return showToast('❌ Username is already taken! Choose another.', false);
             }
 
             localUsers[user] = { username: user, fullName: name, password: pass, cash: cash, holdings: {}, orders: [] };
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
 
-            // Sync to Global Cloud so mobile & other laptops can log in immediately
-            await syncToCloud();
-
-            btn.disabled = false;
-            btn.innerHTML = '<span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>';
-            lucide.createIcons();
-
             currentUser = { username: user, fullName: name };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`🎉 Account created on Cloud for ${name}! Works on Mobile & Laptop.`);
+            showToast(`🎉 Account created for ${name}!`);
         }
 
         function updateNavUserBadge(user) {
@@ -1150,6 +1145,37 @@
             closeProfileDrawer();
             openGatewayModal();
             showToast('Logged out of TradeKaro.');
+        }
+
+        // WhatsApp Web Style 1-Click Mobile Linking
+        function getMobileSyncUrl() {
+            if (!currentUser) return window.location.href;
+            const u = localUsers[currentUser.username];
+            const jsonStr = JSON.stringify(u);
+            const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+            const base = window.location.origin + window.location.pathname;
+            return `${base}#acc=${encoded}`;
+        }
+
+        function openDeviceSyncModal() {
+            if (!currentUser) return openGatewayModal();
+            const link = getMobileSyncUrl();
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}`;
+            document.getElementById('syncQrImage').src = qrUrl;
+            document.getElementById('deviceSyncModal').classList.remove('hidden');
+        }
+
+        function closeDeviceSyncModal() {
+            document.getElementById('deviceSyncModal').classList.add('hidden');
+        }
+
+        function copyMobileSyncLink() {
+            const link = getMobileSyncUrl();
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('Link copied! Open on mobile to login.');
+            }).catch(() => {
+                prompt('Copy this link and send to your phone:', link);
+            });
         }
 
         function downloadCSVReport() {
