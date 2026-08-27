@@ -186,7 +186,7 @@
 
                 <!-- Demo Hint -->
                 <p class="text-center text-[11px] text-slate-500 pt-0.5">
-                    Demo Account: <span class="text-slate-300 font-mono font-bold">trader1</span> / <span class="text-slate-300 font-mono font-bold">password123</span>
+                    Demo: <span class="text-slate-300 font-mono font-bold">trader1</span> / <span class="text-slate-300 font-mono font-bold">password123</span>
                 </p>
             </form>
 
@@ -616,7 +616,7 @@
         </section>
     </main>
 
-    <!-- TradeKaro Strict Authentication Engine -->
+    <!-- TradeKaro Strict & Backward-Compatible Authentication Engine -->
     <script>
         // SHA-256 Web Crypto Hashing Function
         async function hashPassword(password) {
@@ -1012,7 +1012,7 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // STRICT AUTHENTICATION (Zero Auto-Creation, 100% Validated)
+        // STRICT & BACKWARD-COMPATIBLE AUTHENTICATION
         function openGatewayModal() {
             clearAuthError();
             document.getElementById('loginGateway').classList.remove('hidden');
@@ -1060,27 +1060,40 @@
             e.preventDefault();
             clearAuthError();
 
-            const u = (document.getElementById('gLoginUser').value || '').trim().toLowerCase();
-            const p = (document.getElementById('gLoginPass').value || '').trim();
+            const inputUser = (document.getElementById('gLoginUser').value || '').trim();
+            const inputPass = (document.getElementById('gLoginPass').value || '').trim();
 
-            if (!u || !p) {
+            if (!inputUser || !inputPass) {
                 return showAuthError('Please enter both username and password.');
             }
 
-            // Strict Validation 1: Username MUST exist in registered database
-            if (!localUsers[u]) {
-                return showAuthError(`❌ Username "${u}" does not exist! Please click Sign Up.`);
+            // Look up user case-insensitively across local storage
+            const matchedKey = Object.keys(localUsers).find(k => k.toLowerCase() === inputUser.toLowerCase());
+            if (!matchedKey) {
+                return showAuthError(`❌ Username "${inputUser}" does not exist! Please click Sign Up.`);
             }
 
-            // Strict Validation 2: Password MUST match the stored SHA-256 hash
-            const inputHash = await hashPassword(p);
-            const storedHash = localUsers[u].passwordHash;
+            const userObj = localUsers[matchedKey];
+            const inputHash = await hashPassword(inputPass);
+            let isAuthenticated = false;
 
-            if (!storedHash || storedHash !== inputHash) {
+            // Check 1: SHA-256 Hash match
+            if (userObj.passwordHash && userObj.passwordHash === inputHash) {
+                isAuthenticated = true;
+            } 
+            // Check 2: Legacy Plaintext match (seamlessly upgrade to SHA-256)
+            else if (userObj.password && userObj.password === inputPass) {
+                userObj.passwordHash = inputHash;
+                delete userObj.password;
+                localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                isAuthenticated = true;
+            }
+
+            if (!isAuthenticated) {
                 return showAuthError('❌ Incorrect password! Please check and try again.');
             }
 
-            currentUser = { username: u, fullName: localUsers[u].fullName };
+            currentUser = { username: matchedKey, fullName: userObj.fullName };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
@@ -1092,8 +1105,7 @@
             clearAuthError();
 
             const name = (document.getElementById('gRegName').value || '').trim();
-            const rawUser = (document.getElementById('gRegUser').value || '').trim();
-            const user = rawUser.toLowerCase();
+            const user = (document.getElementById('gRegUser').value || '').trim();
             const pass = (document.getElementById('gRegPass').value || '').trim();
             const cash = parseFloat(document.getElementById('gRegCash').value) || 100000;
 
@@ -1101,8 +1113,9 @@
                 return showAuthError('All fields are required.');
             }
 
-            // Strict Validation: Username must be unique
-            if (localUsers[user]) {
+            // Check uniqueness case-insensitively
+            const existingKey = Object.keys(localUsers).find(k => k.toLowerCase() === user.toLowerCase());
+            if (existingKey) {
                 return showAuthError(`❌ Username "${user}" is already taken! Please choose another.`);
             }
 
