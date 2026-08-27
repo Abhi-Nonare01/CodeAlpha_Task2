@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>TradeKaro | Stock Trading Platform</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -130,17 +133,17 @@
 
     <!-- STRICT & CLEAN LOGIN / SIGN-UP MODAL -->
     <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-        <div class="themed-card rounded-3xl border p-6 sm:p-8 max-w-sm w-full shadow-2xl space-y-5 relative my-auto">
+        <div class="themed-card rounded-3xl border p-6 sm:p-8 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
             
-            <!-- Simple App Header -->
-            <div class="text-center space-y-1.5">
-                <div class="inline-flex p-3 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30 mb-1">
+            <!-- App Header -->
+            <div class="text-center space-y-1">
+                <div class="inline-flex p-2.5 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30 mb-1">
                     <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
                 <h2 class="text-2xl font-extrabold tracking-tight text-white">
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
-                <p class="text-xs text-slate-400">Welcome! Please enter your details.</p>
+                <p class="text-xs text-slate-400">Welcome! Enter your details to continue.</p>
             </div>
 
             <!-- Login / Sign Up Switcher -->
@@ -153,8 +156,11 @@
                 </button>
             </div>
 
+            <!-- In-Modal Error Banner -->
+            <div id="authErrorMsg" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold text-center leading-tight"></div>
+
             <!-- STRICT LOGIN FORM -->
-            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3.5">
+            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Username</label>
                     <div class="relative">
@@ -179,37 +185,37 @@
                 </button>
 
                 <!-- Demo Hint -->
-                <p class="text-center text-[11px] text-slate-500 pt-1">
-                    Demo Account: <span class="text-slate-300 font-mono">trader1</span> / <span class="text-slate-300 font-mono">password123</span>
+                <p class="text-center text-[11px] text-slate-500 pt-0.5">
+                    Demo Account: <span class="text-slate-300 font-mono font-bold">trader1</span> / <span class="text-slate-300 font-mono font-bold">password123</span>
                 </p>
             </form>
 
             <!-- STRICT SIGN UP / REGISTER FORM -->
-            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-3 hidden">
+            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-2.5 hidden">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
                     <input type="text" id="gRegName" required placeholder="e.g. Abhishek Nonare"
-                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
+                           class="w-full themed-input rounded-xl px-3.5 py-2 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Unique Username</label>
                     <input type="text" id="gRegUser" required placeholder="Choose a unique username"
-                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
+                           class="w-full themed-input rounded-xl px-3.5 py-2 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
-                    <input type="password" id="gRegPass" required placeholder="Create a strong password"
-                           class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 transition">
+                    <input type="password" id="gRegPass" required placeholder="Create a password"
+                           class="w-full themed-input rounded-xl px-3.5 py-2 text-xs border focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Starting Balance</label>
-                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3.5 py-2.5 text-xs border focus:outline-none focus:border-blue-500 font-mono transition">
+                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3.5 py-2 text-xs border focus:outline-none focus:border-blue-500 font-mono transition">
                         <option value="100000">$100,000.00 (Standard)</option>
                         <option value="50000">$50,000.00</option>
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
+                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
                     <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
@@ -637,12 +643,18 @@
         let mainChart = null;
 
         // User Account Storage
-        let localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
+        let localUsers = {};
 
-        // Pre-seed demo user with SHA-256 hash
-        (async () => {
-            if (!localUsers['trader1'] || !localUsers['trader1'].passwordHash) {
-                const demoHash = await hashPassword('password123');
+        async function initAuthStore() {
+            try {
+                localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
+            } catch (e) {
+                localUsers = {};
+            }
+
+            // Always guarantee default demo user: trader1 / password123
+            const demoHash = await hashPassword('password123');
+            if (!localUsers['trader1'] || localUsers['trader1'].passwordHash !== demoHash) {
                 localUsers['trader1'] = {
                     username: 'trader1',
                     fullName: 'Alex Morgan',
@@ -654,11 +666,12 @@
                 delete localUsers['trader1'].password;
                 localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             }
-        })();
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             loadSavedTheme();
+            await initAuthStore();
             initChart();
             openGatewayModal();
             fetchMarket();
@@ -1000,10 +1013,31 @@
         }
 
         // STRICT AUTHENTICATION (Zero Auto-Creation, 100% Validated)
-        function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
-        function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
+        function openGatewayModal() {
+            clearAuthError();
+            document.getElementById('loginGateway').classList.remove('hidden');
+        }
+        function hideGatewayModal() {
+            clearAuthError();
+            document.getElementById('loginGateway').classList.add('hidden');
+        }
+
+        function clearAuthError() {
+            const errBox = document.getElementById('authErrorMsg');
+            if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
+        }
+
+        function showAuthError(msg) {
+            const errBox = document.getElementById('authErrorMsg');
+            if (errBox) {
+                errBox.textContent = msg;
+                errBox.classList.remove('hidden');
+            }
+            showToast(msg, false);
+        }
 
         function toggleAuthTab(isRegister) {
+            clearAuthError();
             document.getElementById('gatewayLoginForm').classList.toggle('hidden', isRegister);
             document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isRegister);
             document.getElementById('tabAuthLogin').className = isRegister ? 'auth-tab flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center' : 'auth-tab active flex-1 py-2 rounded-xl transition text-center';
@@ -1024,22 +1058,26 @@
 
         async function handleGatewayLogin(e) {
             e.preventDefault();
-            const u = (document.getElementById('gLoginUser').value || '').trim();
+            clearAuthError();
+
+            const u = (document.getElementById('gLoginUser').value || '').trim().toLowerCase();
             const p = (document.getElementById('gLoginPass').value || '').trim();
 
-            if (!u || !p) return showToast('Please enter username & password', false);
+            if (!u || !p) {
+                return showAuthError('Please enter both username and password.');
+            }
 
             // Strict Validation 1: Username MUST exist in registered database
             if (!localUsers[u]) {
-                return showToast('❌ Username does not exist! Please Sign Up first.', false);
+                return showAuthError(`❌ Username "${u}" does not exist! Please click Sign Up.`);
             }
 
             // Strict Validation 2: Password MUST match the stored SHA-256 hash
             const inputHash = await hashPassword(p);
             const storedHash = localUsers[u].passwordHash;
 
-            if (storedHash !== inputHash) {
-                return showToast('❌ Incorrect Password! Please try again.', false);
+            if (!storedHash || storedHash !== inputHash) {
+                return showAuthError('❌ Incorrect password! Please check and try again.');
             }
 
             currentUser = { username: u, fullName: localUsers[u].fullName };
@@ -1051,16 +1089,21 @@
 
         async function handleGatewayRegister(e) {
             e.preventDefault();
+            clearAuthError();
+
             const name = (document.getElementById('gRegName').value || '').trim();
-            const user = (document.getElementById('gRegUser').value || '').trim();
+            const rawUser = (document.getElementById('gRegUser').value || '').trim();
+            const user = rawUser.toLowerCase();
             const pass = (document.getElementById('gRegPass').value || '').trim();
             const cash = parseFloat(document.getElementById('gRegCash').value) || 100000;
 
-            if (!name || !user || !pass) return showToast('All fields are required', false);
+            if (!name || !user || !pass) {
+                return showAuthError('All fields are required.');
+            }
 
             // Strict Validation: Username must be unique
             if (localUsers[user]) {
-                return showToast('❌ Username already taken! Choose another.', false);
+                return showAuthError(`❌ Username "${user}" is already taken! Please choose another.`);
             }
 
             const hashedPass = await hashPassword(pass);
