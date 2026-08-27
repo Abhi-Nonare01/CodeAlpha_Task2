@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuantumTrade | Smart Stock Trading</title>
+    <title>TradeKaro | Simple &amp; Smart Stock Trading</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Theme Definitions */
+        /* Theme Variables */
         .theme-obsidian {
             --bg-main: #090d16;
             --bg-card: #111827;
@@ -36,7 +36,7 @@
             --border-color: #1f2937;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --accent-primary: #3b82f6;
+            --accent-primary: #2563eb;
             --nav-bg: #0d1322;
         }
         .theme-frost {
@@ -111,6 +111,10 @@
             transform: scale(1.15);
             color: var(--accent-primary);
         }
+        .auth-tab.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
         .toast-animate { animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
@@ -123,23 +127,38 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- MANDATORY FULLSCREEN LOGIN / SIGN-UP GATEWAY -->
-    <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md overflow-y-auto">
-        <div class="themed-card rounded-3xl border p-5 sm:p-8 max-w-md w-full shadow-2xl space-y-5 relative my-auto">
-            <div class="text-center space-y-1.5">
-                <div class="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-1">
-                    <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+    <!-- SIMPLE & USER-FRIENDLY LOGIN / SIGN-UP MODAL (TradeKaro) -->
+    <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
+        <div class="themed-card rounded-3xl border p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
+            
+            <!-- App Logo & Brand Name -->
+            <div class="text-center space-y-1">
+                <div class="inline-flex p-2.5 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-1">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
-                <h2 id="gatewayTitle" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Login to QuantumTrade</h2>
-                <p id="gatewaySubtitle" class="text-xs text-slate-400">Institutional stock trading platform with real-time market execution.</p>
+                <h2 class="text-2xl font-black tracking-tight text-white flex items-center justify-center">
+                    Trade<span class="text-blue-500">Karo</span>
+                </h2>
+                <p class="text-xs text-slate-400">Apka Apna Stock Trading Platform 📈</p>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center text-xs text-blue-400 font-medium">
-                💡 Default Login: Username: <strong class="text-white font-mono">trader1</strong> | Password: <strong class="text-white font-mono">password123</strong>
+            <!-- Login / Sign Up Switcher Tabs -->
+            <div class="flex rounded-xl themed-input border p-1 text-xs font-bold">
+                <button type="button" onclick="toggleAuthTab(false)" id="tabAuthLogin" class="auth-tab active flex-1 py-2 rounded-lg transition text-center">
+                    Login
+                </button>
+                <button type="button" onclick="toggleAuthTab(true)" id="tabAuthRegister" class="auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center">
+                    Sign Up
+                </button>
             </div>
 
-            <!-- SIGN IN FORM -->
-            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3.5">
+            <!-- Demo Login Hint -->
+            <div id="demoHintBox" class="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center text-[11px] text-blue-400 font-medium">
+                💡 Demo: User: <strong class="text-white font-mono">trader1</strong> | Pass: <strong class="text-white font-mono">password123</strong>
+            </div>
+
+            <!-- LOGIN FORM (Strict Unique Validation) -->
+            <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
                     <div class="relative">
@@ -153,53 +172,45 @@
                     <div class="relative">
                         <i data-lucide="key" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
                         <input type="password" id="gLoginPass" required value="password123" placeholder="Enter password"
-                               class="w-full themed-input rounded-xl pl-9 pr-3 py-2 text-xs border focus:outline-none focus:border-blue-500 font-medium">
+                               class="w-full themed-input rounded-xl pl-9 pr-8 py-2 text-xs border focus:outline-none focus:border-blue-500 font-medium">
+                        <button type="button" onclick="togglePasswordVisibility('gLoginPass', this)" class="absolute right-2.5 top-2.5 text-slate-500 hover:text-slate-300">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-2">
-                    <span>Sign In to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
-                <div class="text-center text-xs text-slate-400 pt-1">
-                    New trader? <a href="javascript:void(0)" onclick="toggleGatewayMode(true)" class="text-blue-400 hover:underline font-bold">Create Account (Free)</a>
-                </div>
             </form>
 
-            <!-- REGISTRATION FORM -->
-            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-3 hidden">
+            <!-- SIGN UP / REGISTER FORM (Strict Unique Username & Password Creation) -->
+            <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-2.5 hidden">
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Full Name</label>
                     <input type="text" id="gRegName" required placeholder="e.g. Rahul Sharma"
-                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Username (Used for Login)</label>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Unique Username</label>
                     <input type="text" id="gRegUser" required placeholder="Choose unique username"
-                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Email Address</label>
-                    <input type="email" id="gRegEmail" required placeholder="name@email.com"
-                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Password</label>
-                    <input type="password" id="gRegPass" required placeholder="Create password"
-                           class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500">
+                    <input type="password" id="gRegPass" required placeholder="Create strong password"
+                           class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Starting Capital</label>
-                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3 py-2 text-xs border focus:outline-none focus:border-blue-500 font-mono">
+                    <select id="gRegCash" class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500 font-mono">
                         <option value="100000">$100,000.00 (Standard)</option>
                         <option value="50000">$50,000.00</option>
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-2">
-                    <span>Create Real Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
-                <div class="text-center text-xs text-slate-400 pt-1">
-                    Already registered? <a href="javascript:void(0)" onclick="toggleGatewayMode(false)" class="text-blue-400 hover:underline font-bold">Sign In here</a>
-                </div>
             </form>
         </div>
     </div>
@@ -207,7 +218,7 @@
     <!-- Live Ticker Ribbon -->
     <div class="themed-card border-b py-1 px-3 sm:px-4 text-[11px] sm:text-xs font-mono ticker-wrap">
         <div id="tickerRibbon" class="ticker-move space-x-4 sm:space-x-6 text-slate-400">
-            <span>Loading live ticker prices...</span>
+            <span>Loading live TradeKaro tickers...</span>
         </div>
     </div>
 
@@ -215,12 +226,12 @@
     <header class="themed-nav border-b sticky top-0 z-30 px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between shadow-sm">
         <div class="flex items-center space-x-3 sm:space-x-8">
             <div class="flex items-center space-x-2 cursor-pointer" onclick="switchTab('watchlist')">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow font-bold">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow font-bold">
                     <i data-lucide="trending-up" class="w-4 h-4"></i>
                 </div>
                 <div>
                     <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white flex items-center">
-                        Quantum<span class="text-blue-500">Trade</span>
+                        Trade<span class="text-blue-500">Karo</span>
                         <span class="ml-1 text-[8px] px-1 py-0.2 rounded bg-blue-500/10 text-blue-500 border border-blue-500/20 font-mono">PRO</span>
                     </h1>
                 </div>
@@ -250,6 +261,7 @@
                 <span id="navCash" class="font-bold text-emerald-500">$0.00</span>
             </div>
 
+            <!-- Theme Picker -->
             <div class="relative">
                 <button onclick="toggleThemeDropdown()" class="p-1.5 sm:p-2 rounded-xl themed-input border hover:border-blue-500 transition flex items-center" title="Theme">
                     <i data-lucide="palette" class="w-4 h-4 text-blue-500"></i>
@@ -270,6 +282,7 @@
                 </div>
             </div>
 
+            <!-- Profile Badge -->
             <button onclick="openProfileDrawer()" class="flex items-center space-x-1.5 themed-input px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border hover:border-blue-500 transition">
                 <div id="userAvatar" class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow">
                     U
@@ -282,7 +295,7 @@
         </div>
     </header>
 
-    <!-- MOBILE BOTTOM APP NAVIGATION -->
+    <!-- MOBILE BOTTOM APP NAVIGATION (TradeKaro) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 themed-nav border-t flex justify-around py-2 shadow-2xl backdrop-blur-md">
         <button onclick="switchTab('watchlist')" id="mob-watchlist" class="mob-tab-btn active flex flex-col items-center justify-center text-slate-400 transition">
             <i data-lucide="layers" class="tab-icon w-5 h-5 mb-0.5 transition-transform"></i>
@@ -309,7 +322,7 @@
             <div class="space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <h3 class="font-extrabold text-base text-white flex items-center">
-                        <i data-lucide="user" class="w-5 h-5 mr-2 text-blue-500"></i> Trader Profile
+                        <i data-lucide="user" class="w-5 h-5 mr-2 text-blue-500"></i> TradeKaro Profile
                     </h3>
                     <button onclick="closeProfileDrawer()" class="text-slate-400 hover:text-white p-1 rounded-lg">
                         <i data-lucide="x" class="w-5 h-5"></i>
@@ -338,10 +351,6 @@
                     <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
                         <span class="text-slate-400 font-sans">Account ID:</span>
                         <span id="drawerAccId" class="font-bold text-white">ACC-TRADER1</span>
-                    </div>
-                    <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
-                        <span class="text-slate-400 font-sans">Email:</span>
-                        <span id="drawerEmail" class="font-bold text-white truncate max-w-[170px]">alex@domain.com</span>
                     </div>
                     <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
                         <span class="text-slate-400 font-sans">Segment:</span>
@@ -398,6 +407,7 @@
                 </div>
             </div>
 
+            <!-- Right: Stock Detail, Chart & Buy/Sell Panel -->
             <div class="lg:col-span-7 flex flex-col space-y-4">
                 <div class="themed-card rounded-2xl border p-3.5 sm:p-5 shadow-sm">
                     <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
@@ -599,7 +609,7 @@
         </section>
     </main>
 
-    <!-- Engine Script -->
+    <!-- TradeKaro Logic Script -->
     <script>
         const DEFAULT_STOCKS = [
             { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', price: 185.50, change: 2.45, changePercent: 1.34, dayHigh: 186.20, dayLow: 183.10, bid: 185.45, ask: 185.55, sparkline: [183.2, 184.0, 183.8, 185.1, 185.5] },
@@ -616,11 +626,11 @@
         let currentUser = null;
         let mainChart = null;
 
-        // Auto-seed demo account so login NEVER fails on any device
-        let localUsers = JSON.parse(localStorage.getItem('qt_users') || '{}');
+        // Initialize local users storage with default trader1 demo
+        let localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
         if (!localUsers['trader1']) {
             localUsers['trader1'] = { username: 'trader1', fullName: 'Alex Morgan', password: 'password123', cash: 100000, holdings: { 'AAPL': { qty: 25, totalCost: 4500 } }, orders: [{ id: 'ORD-1001', time: '10:30:00 AM', type: 'BUY', symbol: 'AAPL', qty: 25, price: 180.00, total: 4500, fee: 1.0 }] };
-            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -673,14 +683,14 @@
 
         function setTheme(themeClass) {
             document.documentElement.className = themeClass;
-            localStorage.setItem('qt_theme', themeClass);
+            localStorage.setItem('tradekaro_theme', themeClass);
             document.getElementById('themeDropdown').classList.add('hidden');
             showToast(`Theme: ${themeClass.replace('theme-', '').toUpperCase()}`);
             if (mainChart) mainChart.update();
         }
 
         function loadSavedTheme() {
-            const saved = localStorage.getItem('qt_theme') || 'theme-obsidian';
+            const saved = localStorage.getItem('tradekaro_theme') || 'theme-obsidian';
             document.documentElement.className = saved;
         }
 
@@ -866,7 +876,7 @@
                 showToast(`💰 Sold ${qty} shares of ${s.symbol}!`);
             }
 
-            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             updatePortfolioUI();
         }
 
@@ -877,7 +887,7 @@
             u.cash += total;
             delete u.holdings[sym];
             u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: sym, qty, price: s.price, total, fee: 1.0 });
-            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             showToast(`Sold position in ${sym}!`);
             updatePortfolioUI();
         }
@@ -896,7 +906,7 @@
                 u.cash -= amt;
                 showToast(`Withdrew $${amt.toLocaleString()}!`);
             }
-            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
             updatePortfolioUI();
         }
 
@@ -966,54 +976,77 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // Login & Registration
+        // STRICT AUTHENTICATION (Both Username & Password Must Match Exactly)
         function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
         function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
-        function toggleGatewayMode(isReg) {
-            document.getElementById('gatewayLoginForm').classList.toggle('hidden', isReg);
-            document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isReg);
-            document.getElementById('gatewayTitle').textContent = isReg ? 'Open Account' : 'Login to QuantumTrade';
+
+        function toggleAuthTab(isRegister) {
+            document.getElementById('gatewayLoginForm').classList.toggle('hidden', isRegister);
+            document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isRegister);
+            document.getElementById('demoHintBox').classList.toggle('hidden', isRegister);
+            document.getElementById('tabAuthLogin').classList.toggle('active', !isRegister);
+            document.getElementById('tabAuthLogin').className = isRegister ? 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center' : 'auth-tab active flex-1 py-2 rounded-lg transition text-center';
+            document.getElementById('tabAuthRegister').className = isRegister ? 'auth-tab active flex-1 py-2 rounded-lg transition text-center' : 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center';
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<i data-lucide="eye-off" class="w-4 h-4 text-blue-400"></i>';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<i data-lucide="eye" class="w-4 h-4"></i>';
+            }
+            lucide.createIcons();
         }
 
         function handleGatewayLogin(e) {
             e.preventDefault();
-            const u = (document.getElementById('gLoginUser').value || '').trim().toLowerCase();
+            const u = (document.getElementById('gLoginUser').value || '').trim();
             const p = (document.getElementById('gLoginPass').value || '').trim();
 
+            if (!u || !p) return showToast('Please enter both username and password', false);
+
+            // Strict Validation: Username must exist
             if (!localUsers[u]) {
-                if (u === 'trader1' || u === 'admin' || u === 'demo') {
-                    localUsers[u] = { username: u, fullName: 'Alex Morgan', password: p || 'password123', cash: 100000, holdings: {}, orders: [] };
-                } else {
-                    localUsers[u] = { username: u, fullName: u.toUpperCase(), password: p, cash: 100000, holdings: {}, orders: [] };
-                }
-                localStorage.setItem('qt_users', JSON.stringify(localUsers));
-            } else if (localUsers[u].password !== p && p !== 'password123') {
-                return showToast('Incorrect password', false);
+                return showToast('❌ Username does not exist! Please Sign Up.', false);
+            }
+
+            // Strict Validation: Password must match exactly
+            if (localUsers[u].password !== p) {
+                return showToast('❌ Incorrect Password! Please try again.', false);
             }
 
             currentUser = { username: u, fullName: localUsers[u].fullName };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`Welcome back, ${currentUser.fullName}!`);
+            showToast(`Welcome back to TradeKaro, ${currentUser.fullName}!`);
         }
 
         function handleGatewayRegister(e) {
             e.preventDefault();
             const name = (document.getElementById('gRegName').value || '').trim();
-            const user = (document.getElementById('gRegUser').value || '').trim().toLowerCase();
-            const email = (document.getElementById('gRegEmail').value || '').trim();
+            const user = (document.getElementById('gRegUser').value || '').trim();
             const pass = (document.getElementById('gRegPass').value || '').trim();
             const cash = parseFloat(document.getElementById('gRegCash').value) || 100000;
 
-            localUsers[user] = { username: user, fullName: name, email: email, password: pass, cash: cash, holdings: {}, orders: [] };
-            localStorage.setItem('qt_users', JSON.stringify(localUsers));
+            if (!name || !user || !pass) return showToast('All fields are required', false);
+
+            // Strict Validation: Username must be unique
+            if (localUsers[user]) {
+                return showToast('❌ Username is already taken! Choose another.', false);
+            }
+
+            localUsers[user] = { username: user, fullName: name, password: pass, cash: cash, holdings: {}, orders: [] };
+            localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
 
             currentUser = { username: user, fullName: name };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`Account created for ${name}!`);
+            showToast(`🎉 Account created for ${name}! Welcome to TradeKaro.`);
         }
 
         function updateNavUserBadge(user) {
@@ -1034,7 +1067,6 @@
             document.getElementById('drawerFullName').textContent = currentUser.fullName;
             document.getElementById('drawerUsername').textContent = `@${currentUser.username}`;
             document.getElementById('drawerAccId').textContent = `ACC-${currentUser.username.toUpperCase()}`;
-            document.getElementById('drawerEmail').textContent = u.email || `${currentUser.username}@trade.com`;
             document.getElementById('drawerNetWorth').textContent = `$${(u.cash + curVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
             document.getElementById('profileDrawer').classList.remove('hidden');
         }
@@ -1044,7 +1076,7 @@
             currentUser = null;
             closeProfileDrawer();
             openGatewayModal();
-            showToast('Logged out.');
+            showToast('Logged out of TradeKaro.');
         }
 
         function downloadCSVReport() {
@@ -1058,7 +1090,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `trades_${currentUser.username}.csv`;
+            a.download = `TradeKaro_Statement_${currentUser.username}.csv`;
             a.click();
         }
     </script>
