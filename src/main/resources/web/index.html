@@ -127,7 +127,7 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- SIMPLE & USER-FRIENDLY LOGIN / SIGN-UP MODAL (TradeKaro) -->
+    <!-- SIMPLE & USER-FRIENDLY LOGIN / SIGN-UP MODAL (TradeKaro with Cross-Device Cloud Sync) -->
     <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
         <div class="themed-card rounded-3xl border p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
             
@@ -140,6 +140,10 @@
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
                 <p class="text-xs text-slate-400">Apka Apna Stock Trading Platform 📈</p>
+                <div id="cloudSyncBadge" class="inline-flex items-center space-x-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Multi-Device Cloud Active ☁️</span>
+                </div>
             </div>
 
             <!-- Login / Sign Up Switcher Tabs -->
@@ -157,7 +161,7 @@
                 💡 Demo: User: <strong class="text-white font-mono">trader1</strong> | Pass: <strong class="text-white font-mono">password123</strong>
             </div>
 
-            <!-- LOGIN FORM (Strict Unique Validation) -->
+            <!-- LOGIN FORM (Strict Unique Validation & Multi-Device Sync) -->
             <form id="gatewayLoginForm" onsubmit="handleGatewayLogin(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
@@ -178,16 +182,16 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                <button type="submit" id="loginSubmitBtn" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
                     <span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
 
-            <!-- SIGN UP / REGISTER FORM (Strict Unique Username & Password Creation) -->
+            <!-- SIGN UP / REGISTER FORM (Multi-Device Cloud Saved) -->
             <form id="gatewayRegisterForm" onsubmit="handleGatewayRegister(event)" class="space-y-2.5 hidden">
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Full Name</label>
-                    <input type="text" id="gRegName" required placeholder="e.g. Rahul Sharma"
+                    <input type="text" id="gRegName" required placeholder="e.g. Abhishek Nonare"
                            class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
@@ -197,7 +201,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-0.5">Password</label>
-                    <input type="password" id="gRegPass" required placeholder="Create strong password"
+                    <input type="password" id="gRegPass" required placeholder="Create password"
                            class="w-full themed-input rounded-xl px-3 py-1.5 text-xs border focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
@@ -208,8 +212,8 @@
                         <option value="250000">$250,000.00 (Pro)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
-                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                <button type="submit" id="regSubmitBtn" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/30 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                    <span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
@@ -609,8 +613,10 @@
         </section>
     </main>
 
-    <!-- TradeKaro Logic Script -->
+    <!-- TradeKaro Global Cloud Synchronization Engine -->
     <script>
+        const CLOUD_SYNC_URL = 'https://api.restful-api.dev/objects/ff8081819ff5b11001a0446d44b23b71';
+
         const DEFAULT_STOCKS = [
             { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', price: 185.50, change: 2.45, changePercent: 1.34, dayHigh: 186.20, dayLow: 183.10, bid: 185.45, ask: 185.55, sparkline: [183.2, 184.0, 183.8, 185.1, 185.5] },
             { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Semiconductors', price: 875.20, change: 18.50, changePercent: 2.16, dayHigh: 880.00, dayLow: 855.00, bid: 875.10, ask: 875.30, sparkline: [858, 862, 869, 871, 875.2] },
@@ -626,19 +632,54 @@
         let currentUser = null;
         let mainChart = null;
 
-        // Initialize local users storage with default trader1 demo
+        // Local cache of users
         let localUsers = JSON.parse(localStorage.getItem('tradekaro_users') || '{}');
         if (!localUsers['trader1']) {
             localUsers['trader1'] = { username: 'trader1', fullName: 'Alex Morgan', password: 'password123', cash: 100000, holdings: { 'AAPL': { qty: 25, totalCost: 4500 } }, orders: [{ id: 'ORD-1001', time: '10:30:00 AM', type: 'BUY', symbol: 'AAPL', qty: 25, price: 180.00, total: 4500, fee: 1.0 }] };
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Real-Time Multi-Device Cloud Sync Methods
+        async function syncFromCloud() {
+            try {
+                const res = await fetch(CLOUD_SYNC_URL);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.data && data.data.users) {
+                        localUsers = { ...localUsers, ...data.data.users };
+                        localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+                    }
+                }
+            } catch (e) {
+                console.log('Cloud sync silent fetch:', e);
+            }
+        }
+
+        async function syncToCloud() {
+            try {
+                const payload = {
+                    name: "TradeKaro_Master_Users_Registry_v1",
+                    data: { users: localUsers }
+                };
+                await fetch(CLOUD_SYNC_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.log('Cloud sync push:', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             loadSavedTheme();
             initChart();
             openGatewayModal();
             fetchMarket();
+
+            // Perform initial cloud sync
+            await syncFromCloud();
 
             setInterval(() => {
                 simulateMarketTick();
@@ -648,6 +689,9 @@
                 calculateEstTotal();
                 if (currentUser) updatePortfolioUI();
             }, 1000);
+
+            // Periodic background cloud sync every 5 seconds
+            setInterval(syncFromCloud, 5000);
 
             document.getElementById('watchlistSearch').addEventListener('input', renderStockList);
         });
@@ -853,7 +897,7 @@
             document.getElementById('tradeEstTotal').textContent = `$${(qty * price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
         }
 
-        function executeTrade(side) {
+        async function executeTrade(side) {
             if (!currentUser) return openGatewayModal();
             const qty = parseInt(document.getElementById('tradeQty').value) || 10;
             const s = marketData.stocks.find(x => x.symbol === currentSymbol);
@@ -877,6 +921,7 @@
             }
 
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            syncToCloud();
             updatePortfolioUI();
         }
 
@@ -888,6 +933,7 @@
             delete u.holdings[sym];
             u.orders.unshift({ id: 'ORD-' + Math.floor(Math.random()*90000+10000), time: new Date().toLocaleTimeString(), type: 'SELL', symbol: sym, qty, price: s.price, total, fee: 1.0 });
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            syncToCloud();
             showToast(`Sold position in ${sym}!`);
             updatePortfolioUI();
         }
@@ -907,6 +953,7 @@
                 showToast(`Withdrew $${amt.toLocaleString()}!`);
             }
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
+            syncToCloud();
             updatePortfolioUI();
         }
 
@@ -976,7 +1023,7 @@
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
         }
 
-        // STRICT AUTHENTICATION (Both Username & Password Must Match Exactly)
+        // STRICT AUTHENTICATION (Cross-Device Cloud Sync Enabled)
         function openGatewayModal() { document.getElementById('loginGateway').classList.remove('hidden'); }
         function hideGatewayModal() { document.getElementById('loginGateway').classList.add('hidden'); }
 
@@ -984,7 +1031,6 @@
             document.getElementById('gatewayLoginForm').classList.toggle('hidden', isRegister);
             document.getElementById('gatewayRegisterForm').classList.toggle('hidden', !isRegister);
             document.getElementById('demoHintBox').classList.toggle('hidden', isRegister);
-            document.getElementById('tabAuthLogin').classList.toggle('active', !isRegister);
             document.getElementById('tabAuthLogin').className = isRegister ? 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center' : 'auth-tab active flex-1 py-2 rounded-lg transition text-center';
             document.getElementById('tabAuthRegister').className = isRegister ? 'auth-tab active flex-1 py-2 rounded-lg transition text-center' : 'auth-tab flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition text-center';
         }
@@ -1001,12 +1047,22 @@
             lucide.createIcons();
         }
 
-        function handleGatewayLogin(e) {
+        async function handleGatewayLogin(e) {
             e.preventDefault();
             const u = (document.getElementById('gLoginUser').value || '').trim();
             const p = (document.getElementById('gLoginPass').value || '').trim();
 
-            if (!u || !p) return showToast('Please enter both username and password', false);
+            if (!u || !p) return showToast('Please enter username & password', false);
+
+            const btn = document.getElementById('loginSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Checking Cloud...</span>';
+
+            // Sync latest cloud users before checking login
+            await syncFromCloud();
+            btn.disabled = false;
+            btn.innerHTML = '<span>Login to Trade</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+            lucide.createIcons();
 
             // Strict Validation: Username must exist
             if (!localUsers[u]) {
@@ -1025,7 +1081,7 @@
             showToast(`Welcome back to TradeKaro, ${currentUser.fullName}!`);
         }
 
-        function handleGatewayRegister(e) {
+        async function handleGatewayRegister(e) {
             e.preventDefault();
             const name = (document.getElementById('gRegName').value || '').trim();
             const user = (document.getElementById('gRegUser').value || '').trim();
@@ -1034,19 +1090,35 @@
 
             if (!name || !user || !pass) return showToast('All fields are required', false);
 
-            // Strict Validation: Username must be unique
+            const btn = document.getElementById('regSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Creating in Cloud...</span>';
+
+            await syncFromCloud();
+
+            // Strict Validation: Username must be unique across all devices
             if (localUsers[user]) {
-                return showToast('❌ Username is already taken! Choose another.', false);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>';
+                lucide.createIcons();
+                return showToast('❌ Username is already taken on Cloud! Choose another.', false);
             }
 
             localUsers[user] = { username: user, fullName: name, password: pass, cash: cash, holdings: {}, orders: [] };
             localStorage.setItem('tradekaro_users', JSON.stringify(localUsers));
 
+            // Sync to Global Cloud so mobile & other laptops can log in immediately
+            await syncToCloud();
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>Create Account (All Devices)</span> <i data-lucide="check" class="w-4 h-4"></i>';
+            lucide.createIcons();
+
             currentUser = { username: user, fullName: name };
             hideGatewayModal();
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
-            showToast(`🎉 Account created for ${name}! Welcome to TradeKaro.`);
+            showToast(`🎉 Account created on Cloud for ${name}! Works on Mobile & Laptop.`);
         }
 
         function updateNavUserBadge(user) {
