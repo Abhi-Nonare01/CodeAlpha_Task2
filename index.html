@@ -660,6 +660,23 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        // Smart Currency Formatter (Million & Billion Format for >= 1,000,000)
+        function formatMoney(val) {
+            val = Number(val) || 0;
+            const abs = Math.abs(val);
+            const sign = val < 0 ? '-' : '';
+
+            if (abs >= 1e12) {
+                return `${sign}$${(abs / 1e12).toFixed(2)}T`;
+            } else if (abs >= 1e9) {
+                return `${sign}$${(abs / 1e9).toFixed(2)}B`;
+            } else if (abs >= 1e6) {
+                return `${sign}$${(abs / 1e6).toFixed(2)}M`;
+            } else {
+                return `${sign}$${abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        }
+
         const DEFAULT_STOCKS = [
             { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', price: 185.50, change: 2.45, changePercent: 1.34, dayHigh: 186.20, dayLow: 183.10, bid: 185.45, ask: 185.55, sparkline: [183.2, 184.0, 183.8, 185.1, 185.5] },
             { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Semiconductors', price: 875.20, change: 18.50, changePercent: 2.16, dayHigh: 880.00, dayLow: 855.00, bid: 875.10, ask: 875.30, sparkline: [858, 862, 869, 871, 875.2] },
@@ -944,7 +961,7 @@
             const qty = parseInt(document.getElementById('tradeQty').value) || 0;
             const s = marketData.stocks ? marketData.stocks.find(x => x.symbol === currentSymbol) : null;
             const price = s ? s.price : 100.0;
-            document.getElementById('tradeEstTotal').textContent = `$${(qty * price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('tradeEstTotal').textContent = formatMoney(qty * price);
         }
 
         function executeTrade(side) {
@@ -1089,11 +1106,11 @@
             });
 
             const equity = (u.cash || 0) + currentVal;
-            document.getElementById('navCash').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('fundsAvailable').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('portCash').textContent = `$${(u.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('portTotalValue').textContent = `$${equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('portInvested').textContent = `$${invested.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('navCash').textContent = formatMoney(u.cash || 0);
+            document.getElementById('fundsAvailable').textContent = formatMoney(u.cash || 0);
+            document.getElementById('portCash').textContent = formatMoney(u.cash || 0);
+            document.getElementById('portTotalValue').textContent = formatMoney(equity);
+            document.getElementById('portInvested').textContent = formatMoney(invested);
 
             const overallRet = invested > 0 ? (((currentVal - invested) / invested) * 100) : 0;
             const retEl = document.getElementById('portReturn');
@@ -1117,7 +1134,7 @@
                     <td class="py-2.5 font-bold text-white">${o.symbol}</td>
                     <td class="py-2.5">${o.qty}</td>
                     <td class="py-2.5">$${o.price.toFixed(2)}</td>
-                    <td class="py-2.5 font-bold text-white">$${o.total.toFixed(2)}</td>
+                    <td class="py-2.5 font-bold text-white">${formatMoney(o.total)}</td>
                     <td class="py-2.5"><span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold text-[9px] border border-emerald-500/20">EXECUTED</span></td>
                 </tr>
             `);
@@ -1148,7 +1165,7 @@
                             </div>
                             <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
                                 <div class="text-[9px] text-slate-400 font-sans">Total</div>
-                                <div class="font-bold text-white text-xs mt-0.5">$${o.total.toFixed(2)}</div>
+                                <div class="font-bold text-white text-xs mt-0.5">${formatMoney(o.total)}</div>
                             </div>
                         </div>
                         <div class="flex items-center justify-between pt-1 border-t border-slate-800/60 text-[10px] font-mono text-slate-400">
@@ -1351,7 +1368,7 @@
             document.getElementById('drawerFullName').textContent = currentUser.fullName;
             document.getElementById('drawerUsername').textContent = `@${currentUser.username}`;
             document.getElementById('drawerAccId').textContent = `ACC-${currentUser.username.toUpperCase()}`;
-            document.getElementById('drawerNetWorth').textContent = `$${((u.cash || 0) + curVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            document.getElementById('drawerNetWorth').textContent = formatMoney((u.cash || 0) + curVal);
             document.getElementById('profileDrawer').classList.remove('hidden');
         }
 
