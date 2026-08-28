@@ -36,19 +36,19 @@
     <style>
         /* Theme Variables */
         .theme-obsidian {
-            --bg-main: #090d16;
+            --bg-main: #0a0e17;
             --bg-card: #111827;
-            --bg-input: #0b0f19;
-            --border-color: #1f2937;
+            --bg-input: #0f172a;
+            --border-color: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --accent-primary: #2563eb;
-            --nav-bg: #0d1322;
+            --accent-primary: #3b82f6;
+            --nav-bg: #0e1424;
         }
         .theme-frost {
             --bg-main: #f8fafc;
             --bg-card: #ffffff;
-            --bg-input: #ffffff;
+            --bg-input: #f1f5f9;
             --border-color: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #475569;
@@ -134,7 +134,7 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex flex-col space-y-2 max-w-[90vw] sm:max-w-sm pointer-events-none"></div>
 
-    <!-- STRICT & CLEAN LOGIN / SIGN-UP MODAL (Firebase Multi-Device Synced) -->
+    <!-- CLEAN & USER-FRIENDLY LOGIN / SIGN-UP MODAL -->
     <div id="loginGateway" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="themed-card rounded-3xl border p-6 sm:p-8 max-w-sm w-full shadow-2xl space-y-4 relative my-auto">
             
@@ -147,10 +147,6 @@
                     Trade<span class="text-blue-500">Karo</span>
                 </h2>
                 <p class="text-xs text-slate-400">Welcome! Enter your details to continue.</p>
-                <div class="inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Firebase Cloud Sync Active ☁️</span>
-                </div>
             </div>
 
             <!-- Login / Sign Up Switcher -->
@@ -223,14 +219,14 @@
                     </select>
                 </div>
                 <button type="submit" id="btnSubmitRegister" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2 active:scale-95">
-                    <span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
     </div>
 
     <!-- Live Ticker Ribbon -->
-    <div class="themed-card border-b py-1 px-3 sm:px-4 text-[11px] sm:text-xs font-mono ticker-wrap">
+    <div class="themed-card border-b py-1.5 px-3 sm:px-4 text-[11px] sm:text-xs font-mono ticker-wrap shadow-inner">
         <div id="tickerRibbon" class="ticker-move space-x-4 sm:space-x-6 text-slate-400">
             <span>Loading live TradeKaro tickers...</span>
         </div>
@@ -240,45 +236,45 @@
     <header class="themed-nav border-b sticky top-0 z-30 px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between shadow-sm">
         <div class="flex items-center space-x-3 sm:space-x-8">
             <div class="flex items-center space-x-2 cursor-pointer" onclick="switchTab('watchlist')">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow font-bold">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md font-bold">
                     <i data-lucide="trending-up" class="w-4 h-4"></i>
                 </div>
                 <div>
                     <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white flex items-center">
                         Trade<span class="text-blue-500">Karo</span>
-                        <span class="ml-1 text-[8px] px-1 py-0.2 rounded bg-blue-500/10 text-blue-500 border border-blue-500/20 font-mono">PRO</span>
+                        <span class="ml-1.5 text-[9px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-bold">PRO</span>
                     </h1>
                 </div>
             </div>
 
             <!-- Desktop Tabs -->
-            <nav class="hidden md:flex items-center space-x-2 text-xs font-bold">
-                <button onclick="switchTab('watchlist')" id="tab-watchlist" class="tab-btn active px-3 py-2 transition flex items-center">
+            <nav class="hidden md:flex items-center space-x-1 text-xs font-bold">
+                <button onclick="switchTab('watchlist')" id="tab-watchlist" class="tab-btn active px-3.5 py-2 transition flex items-center rounded-lg hover:text-white">
                     <i data-lucide="layers" class="w-4 h-4 mr-1.5"></i> Watchlist
                 </button>
-                <button onclick="switchTab('portfolio')" id="tab-portfolio" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                <button onclick="switchTab('portfolio')" id="tab-portfolio" class="tab-btn px-3.5 py-2 text-slate-400 hover:text-white transition flex items-center rounded-lg">
                     <i data-lucide="briefcase" class="w-4 h-4 mr-1.5"></i> Portfolio
                 </button>
-                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-3.5 py-2 text-slate-400 hover:text-white transition flex items-center rounded-lg">
                     <i data-lucide="clock" class="w-4 h-4 mr-1.5"></i> Orders
                 </button>
-                <button onclick="switchTab('funds')" id="tab-funds" class="tab-btn px-3 py-2 text-slate-400 hover:text-white transition flex items-center">
+                <button onclick="switchTab('funds')" id="tab-funds" class="tab-btn px-3.5 py-2 text-slate-400 hover:text-white transition flex items-center rounded-lg">
                     <i data-lucide="wallet" class="w-4 h-4 mr-1.5"></i> Funds
                 </button>
             </nav>
         </div>
 
         <!-- Right Action Pill -->
-        <div class="flex items-center space-x-2 sm:space-x-4">
-            <div onclick="switchTab('funds')" class="cursor-pointer flex items-center space-x-1.5 themed-input px-2.5 py-1 rounded-xl border transition text-xs font-mono">
-                <span class="text-[10px] text-slate-400 hidden sm:inline">Cash:</span>
-                <span id="navCash" class="font-bold text-emerald-500">$0.00</span>
+        <div class="flex items-center space-x-2 sm:space-x-3">
+            <div onclick="switchTab('funds')" class="cursor-pointer flex items-center space-x-1.5 themed-input px-3 py-1.5 rounded-xl border hover:border-emerald-500/50 transition text-xs font-mono shadow-sm">
+                <span class="text-[10px] text-slate-400 hidden sm:inline font-sans font-semibold">Cash:</span>
+                <span id="navCash" class="font-bold text-emerald-400">$0.00</span>
             </div>
 
             <!-- Theme Picker -->
             <div class="relative">
                 <button onclick="toggleThemeDropdown()" class="p-1.5 sm:p-2 rounded-xl themed-input border hover:border-blue-500 transition flex items-center" title="Theme">
-                    <i data-lucide="palette" class="w-4 h-4 text-blue-500"></i>
+                    <i data-lucide="palette" class="w-4 h-4 text-blue-400"></i>
                 </button>
                 <div id="themeDropdown" class="hidden absolute right-0 mt-2 w-48 themed-card rounded-2xl border shadow-2xl p-2 z-50 space-y-1 text-xs font-bold">
                     <button onclick="setTheme('theme-obsidian')" class="w-full text-left px-3 py-1.5 rounded-xl hover:bg-slate-800 flex items-center space-x-2">
@@ -297,20 +293,20 @@
             </div>
 
             <!-- Profile Badge -->
-            <button onclick="openProfileDrawer()" class="flex items-center space-x-1.5 themed-input px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border hover:border-blue-500 transition">
+            <button onclick="openProfileDrawer()" class="flex items-center space-x-1.5 sm:space-x-2 themed-input px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border hover:border-blue-500 transition shadow-sm">
                 <div id="userAvatar" class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow">
                     U
                 </div>
                 <div class="hidden sm:block text-left">
                     <div id="navUserName" class="text-xs font-bold text-white leading-tight">Trader</div>
-                    <div class="text-[8px] text-emerald-500 font-mono font-semibold">CLOUD SYNCED ☁️</div>
+                    <div class="text-[8px] text-emerald-400 font-mono font-semibold">VERIFIED ✅</div>
                 </div>
             </button>
         </div>
     </header>
 
     <!-- MOBILE BOTTOM APP NAVIGATION (TradeKaro) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 themed-nav border-t flex justify-around py-2 shadow-2xl backdrop-blur-md">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 themed-nav border-t flex justify-around py-2.5 shadow-2xl backdrop-blur-lg">
         <button onclick="switchTab('watchlist')" id="mob-watchlist" class="mob-tab-btn active flex flex-col items-center justify-center text-slate-400 transition">
             <i data-lucide="layers" class="tab-icon w-5 h-5 mb-0.5 transition-transform"></i>
             <span class="text-[10px] font-bold">Watchlist</span>
@@ -343,9 +339,9 @@
                     </button>
                 </div>
 
-                <div class="p-3.5 rounded-2xl bg-gradient-to-br from-blue-900/30 via-slate-900 to-slate-950 border border-blue-500/20 space-y-2">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-900/30 via-slate-900 to-slate-950 border border-blue-500/20 space-y-2.5 shadow-sm">
                     <div class="flex items-center space-x-3">
-                        <div id="drawerAvatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-black text-sm flex items-center justify-center shadow">
+                        <div id="drawerAvatar" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-black text-sm flex items-center justify-center shadow">
                             AM
                         </div>
                         <div>
@@ -354,41 +350,41 @@
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                        <span class="text-slate-400">Cloud Sync:</span>
+                        <span class="text-slate-400">Account Status:</span>
                         <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">
-                            Multi-Device Synced ☁️
+                            Verified Active ✅
                         </span>
                     </div>
                 </div>
 
                 <div class="space-y-2 text-xs font-mono">
-                    <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
                         <span class="text-slate-400 font-sans">Account ID:</span>
                         <span id="drawerAccId" class="font-bold text-white">ACC-TRADER1</span>
                     </div>
-                    <div class="flex items-center justify-between p-2.5 rounded-xl themed-input border">
-                        <span class="text-slate-400 font-sans">Segment:</span>
-                        <span class="font-bold text-emerald-500 font-sans">Equity &amp; Intraday Active</span>
+                    <div class="flex items-center justify-between p-3 rounded-xl themed-input border">
+                        <span class="text-slate-400 font-sans">Trading Segment:</span>
+                        <span class="font-bold text-emerald-400 font-sans">Equity &amp; Intraday Active</span>
                     </div>
                 </div>
 
-                <div class="themed-card rounded-2xl border p-3.5 space-y-2">
+                <div class="themed-card rounded-2xl border p-4 space-y-2.5 shadow-sm">
                     <h5 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Financial Snapshot</h5>
                     <div class="grid grid-cols-2 gap-2 text-center text-xs font-mono">
-                        <div class="p-2 rounded-xl themed-input border">
+                        <div class="p-2.5 rounded-xl themed-input border">
                             <div class="text-[10px] text-slate-400 font-sans">Net Worth</div>
                             <div id="drawerNetWorth" class="font-bold text-white text-xs sm:text-sm mt-0.5">$0.00</div>
                         </div>
-                        <div class="p-2 rounded-xl themed-input border">
+                        <div class="p-2.5 rounded-xl themed-input border">
                             <div class="text-[10px] text-slate-400 font-sans">Win Rate</div>
-                            <div id="drawerWinRate" class="font-bold text-emerald-500 text-xs sm:text-sm mt-0.5">100%</div>
+                            <div id="drawerWinRate" class="font-bold text-emerald-400 text-xs sm:text-sm mt-0.5">100%</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="pt-3 border-t border-slate-800">
-                <button onclick="handleLogout()" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 transition flex items-center justify-center space-x-2">
+                <button onclick="handleLogout()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 transition flex items-center justify-center space-x-2">
                     <i data-lucide="log-out" class="w-4 h-4"></i> <span>Sign Out</span>
                 </button>
             </div>
@@ -396,7 +392,7 @@
     </div>
 
     <!-- MAIN CONTAINER -->
-    <main class="flex-1 p-2.5 sm:p-6 max-w-7xl mx-auto w-full">
+    <main class="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
 
         <!-- TAB 1: WATCHLIST & TRADING -->
         <section id="section-watchlist" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
@@ -406,27 +402,27 @@
                         <h2 class="font-bold text-xs sm:text-sm text-white flex items-center">
                             <i data-lucide="list" class="w-4 h-4 mr-1.5 text-blue-500"></i> Market Watchlist
                         </h2>
-                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold flex items-center">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1"></span> LIVE
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold flex items-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span> LIVE
                         </span>
                     </div>
 
                     <div class="relative">
                         <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-500"></i>
                         <input type="text" id="watchlistSearch" placeholder="Search AAPL, NVDA, TSLA..."
-                               class="w-full themed-input rounded-xl pl-8 pr-3 py-1.5 sm:py-2 text-xs border focus:outline-none focus:border-blue-500 transition font-medium">
+                               class="w-full themed-input rounded-xl pl-8 pr-3 py-2 text-xs border focus:outline-none focus:border-blue-500 transition font-medium">
                     </div>
 
-                    <div id="stockListContainer" class="mt-2.5 space-y-1.5 sm:space-y-2 overflow-y-auto max-h-[360px] sm:max-h-[580px] pr-1"></div>
+                    <div id="stockListContainer" class="mt-2.5 space-y-2 overflow-y-auto max-h-[360px] sm:max-h-[580px] pr-1"></div>
                 </div>
             </div>
 
             <!-- Right: Stock Detail, Chart & Buy/Sell Panel -->
             <div class="lg:col-span-7 flex flex-col space-y-4">
                 <div class="themed-card rounded-2xl border p-3.5 sm:p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                         <div class="flex items-center space-x-2.5">
-                            <div id="activeSymbolBadge" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-600/20 text-blue-500 font-extrabold text-xs sm:text-sm flex items-center justify-center border border-blue-500/30 font-mono">
+                            <div id="activeSymbolBadge" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-600/20 text-blue-400 font-extrabold text-xs sm:text-sm flex items-center justify-center border border-blue-500/30 font-mono shadow-sm">
                                 AAPL
                             </div>
                             <div>
@@ -437,11 +433,11 @@
 
                         <div class="text-right">
                             <div id="activeStockPrice" class="text-base sm:text-2xl font-bold font-mono text-white">$185.50</div>
-                            <div id="activeStockChange" class="text-[10px] sm:text-xs font-semibold font-mono text-emerald-500">+2.45 (+1.34%)</div>
+                            <div id="activeStockChange" class="text-[10px] sm:text-xs font-semibold font-mono text-emerald-400">+2.45 (+1.34%)</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-1.5 sm:gap-2 my-2.5 sm:my-3 text-center text-[10px] sm:text-xs font-mono themed-input p-2 sm:p-2.5 rounded-xl border">
+                    <div class="grid grid-cols-4 gap-1.5 sm:gap-2 my-3 text-center text-[10px] sm:text-xs font-mono themed-input p-2.5 rounded-xl border">
                         <div>
                             <span class="text-[9px] text-slate-400 font-sans block">High</span>
                             <span id="statDayHigh" class="font-bold text-white">$0.00</span>
@@ -468,33 +464,33 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-bold text-slate-300">Quick Shares:</span>
                             <div class="flex items-center space-x-1.5 text-[10px] sm:text-[11px] font-mono font-bold">
-                                <button onclick="setQuantityInput(10)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">10 Sh</button>
-                                <button onclick="setQuantityInput(25)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">25 Sh</button>
-                                <button onclick="setQuantityInput(50)" class="px-2 py-0.5 rounded themed-input border hover:border-blue-500 transition">50 Sh</button>
+                                <button onclick="setQuantityInput(10)" class="px-2.5 py-1 rounded-lg themed-input border hover:border-blue-500 transition">10 Sh</button>
+                                <button onclick="setQuantityInput(25)" class="px-2.5 py-1 rounded-lg themed-input border hover:border-blue-500 transition">25 Sh</button>
+                                <button onclick="setQuantityInput(50)" class="px-2.5 py-1 rounded-lg themed-input border hover:border-blue-500 transition">50 Sh</button>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-2.5">
-                            <div class="themed-input p-2 rounded-xl border flex items-center justify-between">
+                        <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-3">
+                            <div class="themed-input p-2.5 rounded-xl border flex items-center justify-between">
                                 <span class="text-[11px] text-slate-400 font-medium">Qty:</span>
-                                <div class="flex items-center space-x-1 sm:space-x-2">
-                                    <button onclick="adjustShares(-5)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 font-bold font-mono text-xs text-white">-</button>
+                                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                                    <button onclick="adjustShares(-5)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 font-bold font-mono text-xs text-white">-</button>
                                     <input type="number" id="tradeQty" min="1" value="10" class="w-10 sm:w-12 text-center bg-transparent text-white font-mono font-bold text-xs sm:text-sm focus:outline-none" oninput="calculateEstTotal()">
-                                    <button onclick="adjustShares(5)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 font-bold font-mono text-xs text-white">+</button>
+                                    <button onclick="adjustShares(5)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 font-bold font-mono text-xs text-white">+</button>
                                 </div>
                             </div>
-                            <div class="themed-input p-2 rounded-xl border flex items-center justify-between">
+                            <div class="themed-input p-2.5 rounded-xl border flex items-center justify-between">
                                 <span class="text-[11px] text-slate-400 font-medium">Total:</span>
                                 <span id="tradeEstTotal" class="font-bold text-white font-mono text-xs sm:text-sm">$0.00</span>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                            <button onclick="executeTrade('BUY')" class="py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/25 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                            <button onclick="executeTrade('BUY')" class="py-3 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/25 transition flex items-center justify-center space-x-1.5 active:scale-95">
                                 <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                                 <span>BUY <span id="buyBtnSymbol">AAPL</span></span>
                             </button>
-                            <button onclick="executeTrade('SELL')" class="py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-rose-600 hover:bg-rose-500 shadow-lg shadow-rose-600/25 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                            <button onclick="executeTrade('SELL')" class="py-3 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-rose-600 hover:bg-rose-500 shadow-lg shadow-rose-600/25 transition flex items-center justify-center space-x-1.5 active:scale-95">
                                 <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
                                 <span>SELL <span id="sellBtnSymbol">AAPL</span></span>
                             </button>
@@ -507,78 +503,88 @@
         <!-- TAB 2: PORTFOLIO -->
         <section id="section-portfolio" class="hidden space-y-4">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                <div class="themed-card p-3 sm:p-4 rounded-2xl border shadow-sm">
+                <div class="themed-card p-3.5 sm:p-4 rounded-2xl border shadow-sm">
                     <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Portfolio Value</span>
                     <div id="portTotalValue" class="text-base sm:text-xl font-bold font-mono text-white mt-0.5">$0.00</div>
                 </div>
-                <div class="themed-card p-3 sm:p-4 rounded-2xl border shadow-sm">
+                <div class="themed-card p-3.5 sm:p-4 rounded-2xl border shadow-sm">
                     <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Available Cash</span>
-                    <div id="portCash" class="text-base sm:text-xl font-bold font-mono text-emerald-500 mt-0.5">$0.00</div>
+                    <div id="portCash" class="text-base sm:text-xl font-bold font-mono text-emerald-400 mt-0.5">$0.00</div>
                 </div>
-                <div class="themed-card p-3 sm:p-4 rounded-2xl border shadow-sm">
+                <div class="themed-card p-3.5 sm:p-4 rounded-2xl border shadow-sm">
                     <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Invested Amount</span>
                     <div id="portInvested" class="text-base sm:text-xl font-bold font-mono text-white mt-0.5">$0.00</div>
                 </div>
-                <div class="themed-card p-3 sm:p-4 rounded-2xl border shadow-sm">
+                <div class="themed-card p-3.5 sm:p-4 rounded-2xl border shadow-sm">
                     <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Overall Return</span>
-                    <div id="portReturn" class="text-base sm:text-xl font-bold font-mono text-emerald-500 mt-0.5">+0.00%</div>
+                    <div id="portReturn" class="text-base sm:text-xl font-bold font-mono text-emerald-400 mt-0.5">+0.00%</div>
                 </div>
             </div>
 
             <div class="themed-card rounded-2xl border p-3.5 sm:p-5 shadow-sm">
-                <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <h3 class="font-bold text-xs sm:text-sm text-white flex items-center">
-                        <i data-lucide="briefcase" class="w-4 h-4 mr-1.5 text-blue-500"></i> Stock Positions &amp; Holdings
+                        <i data-lucide="briefcase" class="w-4 h-4 mr-1.5 text-blue-500"></i> Stock Holdings
                     </h3>
-                    <span id="holdingBadgeCount" class="text-[10px] font-mono px-2 py-0.5 rounded-full themed-input border text-slate-400 font-bold">0 Stocks</span>
+                    <span id="holdingBadgeCount" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full themed-input border text-slate-400 font-bold">0 Stocks</span>
                 </div>
-                <div class="mt-2.5 overflow-x-auto">
+
+                <!-- Desktop Table View -->
+                <div class="mt-2.5 overflow-x-auto hidden sm:block">
                     <table class="w-full text-left text-xs font-mono">
                         <thead class="text-slate-400 border-b border-slate-800 text-[10px] uppercase font-sans font-bold">
                             <tr>
-                                <th class="pb-2">Stock</th>
-                                <th class="pb-2">Shares</th>
-                                <th class="pb-2">Avg Buy</th>
-                                <th class="pb-2">Price</th>
-                                <th class="pb-2">Value</th>
-                                <th class="pb-2">P&amp;L</th>
-                                <th class="pb-2 text-right">Action</th>
+                                <th class="pb-2.5">Stock</th>
+                                <th class="pb-2.5">Shares</th>
+                                <th class="pb-2.5">Avg Buy</th>
+                                <th class="pb-2.5">Price</th>
+                                <th class="pb-2.5">Value</th>
+                                <th class="pb-2.5">P&amp;L</th>
+                                <th class="pb-2.5 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="portfolioTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
                     </table>
                 </div>
+
+                <!-- Mobile-First User-Friendly Holdings Card List -->
+                <div id="portfolioMobileCards" class="mt-3 sm:hidden space-y-2.5"></div>
             </div>
         </section>
 
-        <!-- TAB 3: ORDERS -->
+        <!-- TAB 3: ORDERS (CLEAN MOBILE CARDS + DESKTOP TABLE) -->
         <section id="section-orders" class="hidden space-y-4">
             <div class="themed-card rounded-2xl border p-3.5 sm:p-5 shadow-sm">
-                <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <h3 class="font-bold text-xs sm:text-sm text-white flex items-center">
                         <i data-lucide="file-text" class="w-4 h-4 mr-1.5 text-blue-500"></i> Executed Orders History
                     </h3>
-                    <button onclick="downloadCSVReport()" class="px-2.5 py-1 themed-input hover:border-emerald-500 rounded-xl text-[11px] font-semibold transition flex items-center border">
-                        <i data-lucide="download" class="w-3.5 h-3.5 mr-1 text-emerald-500"></i> CSV
+                    <button onclick="downloadCSVReport()" class="px-2.5 py-1 themed-input hover:border-emerald-500 rounded-xl text-[11px] font-semibold transition flex items-center border shadow-sm">
+                        <i data-lucide="download" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i> CSV
                     </button>
                 </div>
-                <div class="mt-2.5 overflow-x-auto">
+
+                <!-- Desktop Table View -->
+                <div class="mt-2.5 overflow-x-auto hidden sm:block">
                     <table class="w-full text-left text-xs font-mono">
                         <thead class="text-slate-400 border-b border-slate-800 text-[10px] uppercase font-sans font-bold">
                             <tr>
-                                <th class="pb-2">ID</th>
-                                <th class="pb-2">Time</th>
-                                <th class="pb-2">Type</th>
-                                <th class="pb-2">Stock</th>
-                                <th class="pb-2">Shares</th>
-                                <th class="pb-2">Price</th>
-                                <th class="pb-2">Total</th>
-                                <th class="pb-2">Status</th>
+                                <th class="pb-2.5">ID</th>
+                                <th class="pb-2.5">Time</th>
+                                <th class="pb-2.5">Type</th>
+                                <th class="pb-2.5">Stock</th>
+                                <th class="pb-2.5">Shares</th>
+                                <th class="pb-2.5">Price</th>
+                                <th class="pb-2.5">Total</th>
+                                <th class="pb-2.5">Status</th>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
                     </table>
                 </div>
+
+                <!-- Mobile-First Clean Orders Card Layout (Fixes Cluttered View) -->
+                <div id="ordersMobileCards" class="mt-3 sm:hidden space-y-2.5"></div>
             </div>
         </section>
 
@@ -589,32 +595,32 @@
                     <i data-lucide="wallet" class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-500"></i> Account Funds &amp; Cash Balance
                 </h3>
 
-                <div class="themed-input p-3.5 rounded-2xl border mb-4 flex items-center justify-between">
+                <div class="themed-input p-4 rounded-2xl border mb-4 flex items-center justify-between shadow-sm">
                     <div>
                         <span class="text-xs text-slate-400 font-medium">Available to Trade</span>
-                        <div id="fundsAvailable" class="text-xl sm:text-2xl font-bold font-mono text-emerald-500 mt-0.5">$0.00</div>
+                        <div id="fundsAvailable" class="text-xl sm:text-2xl font-bold font-mono text-emerald-400 mt-0.5">$0.00</div>
                     </div>
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Active</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active Account</span>
                 </div>
 
                 <div class="space-y-3">
                     <label class="block text-xs font-semibold text-slate-300">Quick Add / Withdraw Money</label>
                     <div class="grid grid-cols-4 gap-1.5">
-                        <button onclick="setFundAmount(5000)" class="py-1.5 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$5k</button>
-                        <button onclick="setFundAmount(10000)" class="py-1.5 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$10k</button>
-                        <button onclick="setFundAmount(25000)" class="py-1.5 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$25k</button>
-                        <button onclick="setFundAmount(50000)" class="py-1.5 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$50k</button>
+                        <button onclick="setFundAmount(5000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$5k</button>
+                        <button onclick="setFundAmount(10000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$10k</button>
+                        <button onclick="setFundAmount(25000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$25k</button>
+                        <button onclick="setFundAmount(50000)" class="py-2 rounded-xl themed-input border hover:border-blue-500 text-xs font-mono font-bold transition">+$50k</button>
                     </div>
 
                     <div class="flex items-center space-x-2 pt-1">
                         <div class="relative flex-1">
-                            <span class="absolute left-3 top-2 text-slate-500 font-mono font-bold text-xs">$</span>
-                            <input type="number" id="fundsInput" value="10000" min="100" class="w-full themed-input rounded-xl pl-6 pr-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-blue-500 border">
+                            <span class="absolute left-3 top-2.5 text-slate-500 font-mono font-bold text-xs">$</span>
+                            <input type="number" id="fundsInput" value="10000" min="100" class="w-full themed-input rounded-xl pl-6 pr-2 py-2 text-xs text-white font-mono focus:outline-none focus:border-blue-500 border">
                         </div>
-                        <button onclick="processFunds('deposit')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow transition">
+                        <button onclick="processFunds('deposit')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow transition active:scale-95">
                             Add
                         </button>
-                        <button onclick="processFunds('withdraw')" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow transition">
+                        <button onclick="processFunds('withdraw')" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow transition active:scale-95">
                             Withdraw
                         </button>
                     </div>
@@ -853,7 +859,7 @@
                 return `<span class="inline-flex items-center space-x-1 cursor-pointer hover:text-white" onclick="selectStock('${s.symbol}')">
                     <strong class="text-white font-bold">${s.symbol}</strong>
                     <span>$${s.price.toFixed(2)}</span>
-                    <span class="${isPos ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%</span>
+                    <span class="${isPos ? 'text-emerald-400' : 'text-rose-400'} font-bold">${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%</span>
                 </span>`;
             }).join('');
             ribbon.innerHTML = items + items;
@@ -873,20 +879,20 @@
                 const isSel = s.symbol === currentSymbol;
                 return `
                     <div onclick="selectStock('${s.symbol}')"
-                         class="p-2.5 rounded-xl cursor-pointer transition border ${isSel ? 'bg-blue-600/10 border-blue-500/50 shadow-sm' : 'themed-input hover:border-slate-500'}">
+                         class="p-2.5 sm:p-3 rounded-xl cursor-pointer transition border ${isSel ? 'bg-blue-600/10 border-blue-500/50 shadow-sm' : 'themed-input hover:border-slate-500'}">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-7 h-7 rounded-lg bg-slate-800 text-white font-bold font-mono text-[11px] flex items-center justify-center">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 text-white font-bold font-mono text-xs flex items-center justify-center shadow-sm">
                                     ${s.symbol.substring(0, 3)}
                                 </div>
                                 <div>
                                     <div class="font-extrabold text-xs text-white font-mono">${s.symbol}</div>
-                                    <div class="text-[9px] text-slate-400 truncate max-w-[100px] font-medium">${s.name}</div>
+                                    <div class="text-[10px] text-slate-400 truncate max-w-[110px] font-medium">${s.name}</div>
                                 </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-xs font-bold font-mono text-white">$${s.price.toFixed(2)}</div>
-                                <div class="text-[10px] font-mono font-bold ${isPos ? 'text-emerald-500' : 'text-rose-500'}">
+                                <div class="text-[10px] font-mono font-bold ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
                                     ${isPos ? '+' : ''}${s.change.toFixed(2)} (${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%)
                                 </div>
                             </div>
@@ -916,7 +922,7 @@
                 const isPos = s.change >= 0;
                 const chgEl = document.getElementById('activeStockChange');
                 chgEl.textContent = `${isPos ? '+' : ''}${s.change.toFixed(2)} (${isPos ? '+' : ''}${s.changePercent.toFixed(2)}%)`;
-                chgEl.className = `text-[10px] sm:text-xs font-bold font-mono ${isPos ? 'text-emerald-500' : 'text-rose-500'}`;
+                chgEl.className = `text-[10px] sm:text-xs font-bold font-mono ${isPos ? 'text-emerald-400' : 'text-rose-400'}`;
 
                 document.getElementById('statDayHigh').textContent = `$${s.dayHigh.toFixed(2)}`;
                 document.getElementById('statDayLow').textContent = `$${s.dayLow.toFixed(2)}`;
@@ -1012,6 +1018,7 @@
             let invested = 0;
             let currentVal = 0;
             const rows = [];
+            const mobileHoldings = [];
 
             Object.entries(u.holdings || {}).forEach(([sym, h]) => {
                 if (!h || h.qty <= 0) return;
@@ -1023,6 +1030,7 @@
                 invested += (h.qty * avg);
                 currentVal += mkt;
 
+                // Desktop Table Row
                 rows.push(`
                     <tr class="hover:bg-slate-800/30 transition">
                         <td class="py-2.5 font-bold text-white">${sym}</td>
@@ -1030,15 +1038,53 @@
                         <td class="py-2.5">$${avg.toFixed(2)}</td>
                         <td class="py-2.5">$${s.price.toFixed(2)}</td>
                         <td class="py-2.5 font-bold text-white">$${mkt.toFixed(2)}</td>
-                        <td class="py-2.5 font-bold ${pnl >= 0 ? 'text-emerald-500' : 'text-rose-500'}">
+                        <td class="py-2.5 font-bold ${pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
                             ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)
                         </td>
                         <td class="py-2.5 text-right">
-                            <button onclick="instantSellPosition('${sym}', ${h.qty})" class="px-2 py-0.5 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-[10px] font-bold transition">
+                            <button onclick="instantSellPosition('${sym}', ${h.qty})" class="px-2.5 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-[10px] font-bold transition">
                                 Exit
                             </button>
                         </td>
                     </tr>
+                `);
+
+                // Mobile Card Layout
+                mobileHoldings.push(`
+                    <div class="themed-input p-3.5 rounded-2xl border space-y-2.5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 font-extrabold font-mono text-xs flex items-center justify-center border border-blue-500/30">
+                                    ${sym}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-white">${sym}</div>
+                                    <div class="text-[10px] text-slate-400 font-medium">${h.qty} Shares</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs font-bold text-white font-mono">$${mkt.toFixed(2)}</div>
+                                <div class="text-[10px] font-bold font-mono ${pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-center font-mono">
+                            <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                <span class="text-[9px] text-slate-400 font-sans block">Avg Buy Price</span>
+                                <span class="text-xs font-bold text-white">$${avg.toFixed(2)}</span>
+                            </div>
+                            <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                <span class="text-[9px] text-slate-400 font-sans block">Live Market Price</span>
+                                <span class="text-xs font-bold text-white">$${s.price.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="pt-0.5 flex items-center justify-end">
+                            <button onclick="instantSellPosition('${sym}', ${h.qty})" class="w-full py-2 rounded-xl bg-rose-600/15 hover:bg-rose-600 text-rose-300 hover:text-white text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-rose-500/30 active:scale-95">
+                                <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i> <span>Sell / Exit Position</span>
+                            </button>
+                        </div>
+                    </div>
                 `);
             });
 
@@ -1052,24 +1098,69 @@
             const overallRet = invested > 0 ? (((currentVal - invested) / invested) * 100) : 0;
             const retEl = document.getElementById('portReturn');
             retEl.textContent = `${overallRet >= 0 ? '+' : ''}${overallRet.toFixed(2)}%`;
-            retEl.className = `text-base sm:text-xl font-bold font-mono mt-0.5 ${overallRet >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+            retEl.className = `text-base sm:text-xl font-bold font-mono mt-0.5 ${overallRet >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
 
             document.getElementById('holdingBadgeCount').textContent = `${rows.length} Stocks`;
+            
+            // Render Desktop Table
             document.getElementById('portfolioTableBody').innerHTML = rows.length ? rows.join('') : '<tr><td colspan="7" class="py-5 text-center text-slate-400 font-sans text-xs">No active positions. Buy stocks from Watchlist!</td></tr>';
+            
+            // Render Mobile Cards
+            document.getElementById('portfolioMobileCards').innerHTML = mobileHoldings.length ? mobileHoldings.join('') : '<div class="p-5 text-center text-slate-400 font-sans text-xs themed-input rounded-2xl border">No active positions. Buy stocks from Watchlist!</div>';
 
+            // Desktop Orders
             const oRows = (u.orders || []).map(o => `
                 <tr class="hover:bg-slate-800/30 transition">
-                    <td class="py-2 text-slate-400">${o.id}</td>
-                    <td class="py-2 text-slate-400">${o.time}</td>
-                    <td class="py-2 font-bold ${o.type === 'BUY' ? 'text-emerald-500' : 'text-rose-500'}">${o.type}</td>
-                    <td class="py-2 font-bold text-white">${o.symbol}</td>
-                    <td class="py-2">${o.qty}</td>
-                    <td class="py-2">$${o.price.toFixed(2)}</td>
-                    <td class="py-2 font-bold text-white">$${o.total.toFixed(2)}</td>
-                    <td class="py-2"><span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold text-[9px]">DONE</span></td>
+                    <td class="py-2.5 text-slate-400">${o.id}</td>
+                    <td class="py-2.5 text-slate-400">${o.time}</td>
+                    <td class="py-2.5 font-bold ${o.type === 'BUY' ? 'text-emerald-400' : 'text-rose-400'}">${o.type}</td>
+                    <td class="py-2.5 font-bold text-white">${o.symbol}</td>
+                    <td class="py-2.5">${o.qty}</td>
+                    <td class="py-2.5">$${o.price.toFixed(2)}</td>
+                    <td class="py-2.5 font-bold text-white">$${o.total.toFixed(2)}</td>
+                    <td class="py-2.5"><span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold text-[9px] border border-emerald-500/20">EXECUTED</span></td>
                 </tr>
             `);
             document.getElementById('ordersTableBody').innerHTML = oRows.length ? oRows.join('') : '<tr><td colspan="8" class="py-5 text-center text-slate-400 font-sans text-xs">No orders recorded yet.</td></tr>';
+
+            // Mobile Orders Card Layout (Fixes cluttered/scattered view on mobile)
+            const mobileOrders = (u.orders || []).map(o => {
+                const isBuy = o.type === 'BUY';
+                return `
+                    <div class="themed-input p-3.5 rounded-2xl border space-y-2.5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2.5 py-0.5 rounded-lg font-extrabold text-[10px] font-mono ${isBuy ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'}">
+                                    ${o.type}
+                                </span>
+                                <span class="font-bold text-sm text-white font-mono">${o.symbol}</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-mono">${o.time}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center font-mono">
+                            <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                <div class="text-[9px] text-slate-400 font-sans">Shares</div>
+                                <div class="font-bold text-white text-xs mt-0.5">${o.qty}</div>
+                            </div>
+                            <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                <div class="text-[9px] text-slate-400 font-sans">Price</div>
+                                <div class="font-bold text-white text-xs mt-0.5">$${o.price.toFixed(2)}</div>
+                            </div>
+                            <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                <div class="text-[9px] text-slate-400 font-sans">Total</div>
+                                <div class="font-bold text-white text-xs mt-0.5">$${o.total.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-800/60 text-[10px] font-mono text-slate-400">
+                            <span>ID: <strong class="text-slate-300 font-semibold">${o.id}</strong></span>
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">EXECUTED ✅</span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('ordersMobileCards').innerHTML = mobileOrders.length ? mobileOrders.join('') : '<div class="p-5 text-center text-slate-400 font-sans text-xs themed-input rounded-2xl border">No orders recorded yet.</div>';
+
+            lucide.createIcons();
         }
 
         // FIREBASE & STRICT AUTHENTICATION
@@ -1129,7 +1220,7 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>Verifying Cloud...</span>';
+            btn.innerHTML = '<span>Verifying...</span>';
 
             const userKey = inputUser.toLowerCase();
             let userObj = localUsers[userKey];
@@ -1178,7 +1269,7 @@
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
             listenToCloudUserUpdates(userObj.username);
-            showToast(`☁️ Cloud Connected: Welcome back, ${currentUser.fullName}!`);
+            showToast(`Welcome back, ${currentUser.fullName}!`);
         }
 
         async function handleGatewayRegister(e) {
@@ -1196,7 +1287,7 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>Creating on Cloud...</span>';
+            btn.innerHTML = '<span>Creating Account...</span>';
 
             const userKey = user.toLowerCase();
 
@@ -1206,9 +1297,9 @@
                     const snap = await fbDb.ref('users/' + userKey).once('value');
                     if (snap.exists()) {
                         btn.disabled = false;
-                        btn.innerHTML = '<span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
+                        btn.innerHTML = '<span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
                         lucide.createIcons();
-                        return showAuthError(`❌ Username "${user}" is already taken on Cloud! Choose another.`);
+                        return showAuthError(`❌ Username "${user}" is already taken! Choose another.`);
                     }
                 } catch (err) {
                     console.warn("Cloud uniqueness fallback:", err);
@@ -1229,7 +1320,7 @@
             saveUserToCloud(newUserObj);
 
             btn.disabled = false;
-            btn.innerHTML = '<span>Create Cloud Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
+            btn.innerHTML = '<span>Create Account</span> <i data-lucide="check" class="w-4 h-4"></i>';
             lucide.createIcons();
 
             currentUser = { username: user, fullName: name };
@@ -1237,7 +1328,7 @@
             updateNavUserBadge(currentUser);
             updatePortfolioUI();
             listenToCloudUserUpdates(user);
-            showToast(`🎉 Cloud Account created! Synced across all your devices.`);
+            showToast(`🎉 Account created for ${name}!`);
         }
 
         function updateNavUserBadge(user) {
